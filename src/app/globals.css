@@ -1,26 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* paper + ink — a ledger, not a SaaS gradient */
+  --paper: #ece7d9;
+  --paper-line: #d9d2bd;
+  --tab: #ddd3b6;
+  --ink: #1d2220;
+  --ink-soft: #55584f;
+
+  /* status palette — the same colors the product uses for funnel stages */
+  --status-applied: #2b3a55;
+  --status-oa: #c98a2c;
+  --status-interview: #2f6f76;
+  --status-offer: #3c6e47;
+  --status-rejected: #b54a3f;
+  --status-ghosted: #8b8880;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-line: var(--paper-line);
+  --color-tab: var(--tab);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-status-applied: var(--status-applied);
+  --color-status-oa: var(--status-oa);
+  --color-status-interview: var(--status-interview);
+  --color-status-offer: var(--status-offer);
+  --color-status-rejected: var(--status-rejected);
+  --color-status-ghosted: var(--status-ghosted);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}

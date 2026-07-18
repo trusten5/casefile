@@ -1,0 +1,97 @@
+import Link from "next/link";
+import { companyDisplayName, companyLogoUrl, companySlug } from "@/lib/companies";
+import { formatPostedDate } from "@/lib/dates";
+import { ROLE_TYPE_LABELS, ROLE_TYPE_STYLES } from "@/lib/roleType";
+import { CompanyLogo } from "@/components/CompanyLogo";
+import { savePosting, applyFromPosting, reportBrokenLink } from "./actions";
+import { ApplyControl } from "./ApplyControl";
+
+type CompanyInfo = { name: string; logo_url?: string | null; slug?: string | null };
+
+type Posting = {
+  id: string;
+  title: string;
+  location: string | null;
+  role_type: string | null;
+  url: string;
+  posted_at: string;
+  company: CompanyInfo | CompanyInfo[] | null;
+};
+
+// Shared by the full feed and the dashboard's "latest postings" preview so
+// Save/Applied behave identically wherever a posting shows up. `returnTo`
+// tells the action which page to redirect back to (with a flash message).
+export function PostingRow({
+  posting,
+  isSaved,
+  isApplied,
+  returnTo,
+}: {
+  posting: Posting;
+  isSaved: boolean;
+  isApplied: boolean;
+  returnTo: string;
+}) {
+  const save = savePosting.bind(null, posting.id, returnTo);
+  const apply = applyFromPosting.bind(null, posting.id, returnTo);
+  const reportBroken = reportBrokenLink.bind(null, posting.id, returnTo);
+  const companyName = companyDisplayName(posting.company);
+  const slug = companySlug(posting.company);
+  const roleType = posting.role_type;
+
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-4 py-4">
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        {slug ? (
+          <Link href={`/companies/${slug}`}>
+            <CompanyLogo name={companyName} logoUrl={companyLogoUrl(posting.company)} />
+          </Link>
+        ) : (
+          <CompanyLogo name={companyName} logoUrl={companyLogoUrl(posting.company)} />
+        )}
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="break-words font-medium text-ink">{posting.title}</p>
+            {roleType && ROLE_TYPE_LABELS[roleType] && (
+              <span
+                className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wide ${ROLE_TYPE_STYLES[roleType]}`}
+              >
+                {ROLE_TYPE_LABELS[roleType]}
+              </span>
+            )}
+          </div>
+          <p className="break-words text-sm text-ink-soft">
+            {slug ? (
+              <Link href={`/companies/${slug}`} className="hover:underline">
+                {companyName}
+              </Link>
+            ) : (
+              companyName
+            )}
+            {posting.location ? ` — ${posting.location}` : ""}
+          </p>
+          <p className="mt-0.5 font-mono text-xs text-ink-soft">
+            Posted {formatPostedDate(posting.posted_at)}
+          </p>
+        </div>
+      </div>
+      <div className="flex shrink-0 items-center gap-3">
+        <form action={save}>
+          <button
+            type="submit"
+            disabled={isSaved}
+            className="rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink disabled:opacity-50"
+          >
+            {isSaved ? "Saved" : "Save"}
+          </button>
+        </form>
+        <ApplyControl
+          url={posting.url}
+          initialApplied={isApplied}
+          onApply={apply}
+          onReportBroken={reportBroken}
+        />
+      </div>
+    </li>
+  );
+}
