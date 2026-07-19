@@ -28,7 +28,6 @@ export default async function CompanyDetailPage(props: PageProps<"/companies/[sl
     .select("id, title, location, role_type, url, posted_at")
     .eq("company_id", company.id)
     .eq("is_active", true)
-    .is("reported_broken_at", null)
     .order("posted_at", { ascending: false });
 
   const [{ data: saved }, { data: applied }, { data: savedCompany }, { data: contacts }] =

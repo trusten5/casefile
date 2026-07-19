@@ -62,7 +62,6 @@ async function fetchAllActivePostings(supabase: ReturnType<typeof getSupabase>) 
       .from("postings")
       .select("company_id, title, posted_at, role_type")
       .eq("is_active", true)
-      .is("reported_broken_at", null)
       .order("id")
       .range(offset, offset + PAGE_SIZE - 1);
     if (error) throw error;
@@ -89,7 +88,6 @@ export default async function CompaniesPage(props: PageProps<"/companies">) {
         .from("companies")
         .select("id, name, slug, logo_url, is_notable, postings(count)")
         .eq("postings.is_active", true)
-        .is("postings.reported_broken_at", null)
         .order("name")
         .returns<CompanyRow[]>(),
       fetchAllActivePostings(supabase),

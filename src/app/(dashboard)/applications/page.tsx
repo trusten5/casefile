@@ -322,7 +322,6 @@ async function fetchPostings(
     )
     .in("id", ids)
     .eq("is_active", true)
-    .is("reported_broken_at", null)
     .order("posted_at", { ascending: false });
 
   if (company) query = query.ilike("company.name", `%${company}%`);
@@ -344,7 +343,6 @@ async function fetchRecommended(
     .from("postings")
     .select("id, title, location, role_type, url, posted_at, company:companies(name, logo_url, slug)")
     .eq("is_active", true)
-    .is("reported_broken_at", null)
     .order("posted_at", { ascending: false })
     .limit(15);
 

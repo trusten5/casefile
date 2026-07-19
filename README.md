@@ -60,6 +60,17 @@ Verify a board resolves before adding it:
 - Lever: `https://api.lever.co/v0/postings/{token}?mode=json`
 - Ashby: `https://api.ashbyhq.com/posting-api/job-board/{token}`
 
+## Broken link reports
+
+Reporting a posting flags it (`reported_broken_at`) but doesn't hide it —
+`is_active` alone controls visibility, so one report can't take a live
+posting down for everyone. Flagged postings queue up at `/admin/reports`
+(visible only to `ADMIN_EMAIL`, also linked from the dashboard nav for that
+account) with "Confirm broken" (hides it) / "Dismiss" (clears the flag)
+actions. Reporting also emails `ADMIN_EMAIL` via Postmark if
+`POSTMARK_SERVER_TOKEN`/`POSTMARK_FROM_EMAIL` are set — silently skipped
+otherwise.
+
 ## Account deletion
 
 `/api/webhooks/clerk` handles Clerk's `user.deleted` event and removes the

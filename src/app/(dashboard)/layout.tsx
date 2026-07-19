@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isAdmin } from "@/lib/admin";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -12,9 +13,13 @@ const NAV_LINKS = [
 // Account identity/sign-out (Clerk's UserButton) lives inside /profile now,
 // not the header — a single entry point for everything account- and
 // preference-related, instead of two separate ones.
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const navLinks = (await isAdmin())
+    ? [...NAV_LINKS, { href: "/admin/reports", label: "Admin" }]
+    : NAV_LINKS;
+
   return (
     <div className="flex flex-1 flex-col">
       <header className="flex items-center border-b border-paper-line px-6 py-4">
@@ -23,7 +28,7 @@ export default function DashboardLayout({
             Casefile
           </Link>
           <nav className="flex gap-4">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

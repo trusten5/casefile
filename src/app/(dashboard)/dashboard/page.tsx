@@ -45,7 +45,6 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
       .from("postings")
       .select("id, title, location, role_type, url, posted_at, company:companies(name, logo_url, slug)")
       .eq("is_active", true)
-      .is("reported_broken_at", null)
       .order("posted_at", { ascending: false })
       .limit(5),
     supabase.from("saved_postings").select("posting_id").eq("user_id", userId),

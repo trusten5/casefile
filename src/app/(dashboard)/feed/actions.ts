@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
+import { notifyAdminOfReport } from "@/lib/notify";
 
 export async function savePosting(postingId: string, returnTo: string) {
   const { userId } = await auth();
@@ -63,19 +64,26 @@ export async function applyFromPosting(postingId: string, returnTo: string) {
 // than navigating. Anonymous visitors still get redirected to sign-up,
 // same as the other actions here, since reporting requires a returnTo
 // destination anyway.
-// One report is trusted immediately; reported_broken_at is separate from
-// is_active so the next sync's upsert can't silently un-report it.
+// A report only flags the posting for admin review (/admin/reports) — it
+// stays visible (is_active unchanged) until confirmed there, so one bad
+// report can't take a live posting down for everyone. reported_broken_at
+// is separate from is_active so the next sync's upsert can't clobber it.
 export async function reportBrokenLink(postingId: string, returnTo: string) {
   const { userId } = await auth();
   if (!userId) redirect(`/sign-up?redirect_url=${encodeURIComponent(returnTo)}`);
   const supabase = getSupabase();
 
-  const { error } = await supabase
+  const { data: posting, error } = await supabase
     .from("postings")
     .update({ reported_broken_at: new Date().toISOString() })
-    .eq("id", postingId);
+    .eq("id", postingId)
+    .select("title, url")
+    .single();
   if (error) throw error;
+
+  await notifyAdminOfReport(posting);
 
   revalidatePath("/feed");
   revalidatePath("/dashboard");
+  revalidatePath("/admin/reports");
 }

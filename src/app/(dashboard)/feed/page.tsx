@@ -60,7 +60,6 @@ export default async function FeedPage(props: PageProps<"/feed">) {
       "id, title, location, role_type, url, posted_at, company:companies!inner(name, slug, logo_url)"
     )
     .eq("is_active", true)
-    .is("reported_broken_at", null)
     .order("posted_at", { ascending: false })
     .limit(60);
 

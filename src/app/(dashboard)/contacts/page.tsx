@@ -167,7 +167,6 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
         .select("company_id, posted_at")
         .in("company_id", companyIds)
         .eq("is_active", true)
-        .is("reported_broken_at", null)
         .gte("posted_at", daysAgoISO(7))
     : { data: [] as { company_id: string; posted_at: string }[] };
 
