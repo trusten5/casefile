@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Zilla_Slab, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const displayFont = Zilla_Slab({
@@ -67,7 +69,12 @@ export default function RootLayout({
       >
         <body className="min-h-full flex flex-col bg-paper text-ink font-sans">
           {children}
+          <SpeedInsights />
         </body>
+        {/* Unset in local/dev — only Vercel's production env needs a real measurement ID. */}
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
       </html>
     </ClerkProvider>
   );

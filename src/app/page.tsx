@@ -64,7 +64,7 @@ export default async function Home(props: PageProps<"/">) {
           Fall recruiting starts in weeks
         </p>
         <h1 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight text-ink sm:text-5xl">
-          Every internship posting, in one feed.
+          Every internship, new-grad, and full-time posting, in one feed.
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-soft">
           Browse it free, no account needed. Sign up when you want to save a
@@ -88,17 +88,30 @@ export default async function Home(props: PageProps<"/">) {
           </p>
         )}
 
-        <ul className="mt-6 divide-y divide-paper-line rounded-xl border border-paper-line bg-tab/10 px-4">
-          {(postings ?? []).map((posting) => (
-            <PostingRow
-              key={posting.id}
-              posting={posting}
-              isSaved={false}
-              isApplied={false}
-              returnTo="/feed"
-            />
-          ))}
-        </ul>
+        <div className="relative mt-7 pt-7">
+          <span className="absolute left-0 top-0 rounded-t-md bg-tab px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-soft">
+            Live feed
+          </span>
+          {postings?.length ? (
+            <ul className="divide-y divide-paper-line rounded-b-xl rounded-tr-xl border border-paper-line bg-tab/10 px-4">
+              {postings.map((posting) => (
+                <PostingRow
+                  key={posting.id}
+                  posting={posting}
+                  isSaved={false}
+                  isApplied={false}
+                  returnTo="/feed"
+                />
+              ))}
+            </ul>
+          ) : (
+            !error && (
+              <p className="rounded-b-xl rounded-tr-xl border border-paper-line bg-tab/10 px-4 py-6 text-sm text-ink-soft">
+                No postings match those filters yet — try clearing one.
+              </p>
+            )
+          )}
+        </div>
 
         <div className="mt-6">
           <Link
