@@ -9,7 +9,7 @@ export default function PrivacyPage() {
         ← Back to Casefile
       </Link>
       <h1 className="mt-6 font-display text-3xl font-semibold text-ink">Privacy</h1>
-      <p className="mt-2 text-sm text-ink-soft">Last updated 2026.</p>
+      <p className="mt-2 text-sm text-ink-soft">Last updated July 19, 2026.</p>
 
       <div className="mt-8 space-y-6 text-sm leading-relaxed text-ink-soft">
         <section>
@@ -55,8 +55,8 @@ export default function PrivacyPage() {
           <h2 className="font-display text-lg font-semibold text-ink">Your data</h2>
           <p className="mt-2">
             Email{" "}
-            <a href="mailto:trusten@twyfordpartners.com" className="underline">
-              trusten@twyfordpartners.com
+            <a href="mailto:hq@casefile.site" className="underline">
+              hq@casefile.site
             </a>{" "}
             to request an export or deletion of your data.
           </p>

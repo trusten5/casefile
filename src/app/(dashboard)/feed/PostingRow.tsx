@@ -40,10 +40,10 @@ export function PostingRow({
   const roleType = posting.role_type;
 
   return (
-    <li className="flex flex-wrap items-center justify-between gap-4 py-4">
+    <li className="flex flex-wrap items-start justify-between gap-4 py-4">
       <div className="flex min-w-0 flex-1 items-start gap-3">
         {slug ? (
-          <Link href={`/companies/${slug}`}>
+          <Link href={`/companies/${slug}`} className="shrink-0">
             <CompanyLogo name={companyName} logoUrl={companyLogoUrl(posting.company)} />
           </Link>
         ) : (

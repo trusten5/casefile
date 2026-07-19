@@ -116,9 +116,9 @@ export default async function Home(props: PageProps<"/">) {
         <div className="mt-6">
           <Link
             href={feedQuery ? `/feed?${feedQuery}` : "/feed"}
-            className="text-sm font-medium text-ink hover:underline"
+            className="inline-flex items-center gap-1.5 rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
           >
-            See the full feed →
+            See the full feed <span aria-hidden>→</span>
           </Link>
         </div>
       </section>

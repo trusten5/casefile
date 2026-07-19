@@ -103,7 +103,7 @@ export function FeedFilters({
           </select>
         </label>
       )}
-      <label className="flex flex-col gap-1 text-xs text-ink-soft">
+      <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
         Company
         <input
           value={filters.company}
@@ -112,7 +112,7 @@ export function FeedFilters({
           className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         />
       </label>
-      <label className="flex flex-col gap-1 text-xs text-ink-soft">
+      <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
         Role type
         <select
           value={filters.roleType}
@@ -126,7 +126,7 @@ export function FeedFilters({
           ))}
         </select>
       </label>
-      <label className="flex flex-col gap-1 text-xs text-ink-soft">
+      <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
         Location contains
         <input
           value={filters.location}
@@ -135,7 +135,7 @@ export function FeedFilters({
           className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         />
       </label>
-      <label className="flex flex-col gap-1 text-xs text-ink-soft">
+      <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
         Keyword (role, team, employment type)
         <input
           value={filters.keyword}
@@ -144,7 +144,7 @@ export function FeedFilters({
           className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         />
       </label>
-      <label className="flex flex-col gap-1 text-xs text-ink-soft">
+      <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
         Level
         <select
           value={filters.level}
