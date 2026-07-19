@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
+import { applyPostingFilters } from "@/lib/postingFilters";
 import { Flash } from "@/components/Flash";
 import { PostingRow } from "./PostingRow";
 import { FeedFilters } from "./FeedFilters";
@@ -54,21 +55,17 @@ export default async function FeedPage(props: PageProps<"/feed">) {
 
   // `!inner` makes the embedded company filterable (company.name) — every
   // posting always has a company, so this doesn't change which rows match.
-  let query = supabase
-    .from("postings")
-    .select(
-      "id, title, location, role_type, url, posted_at, company:companies!inner(name, slug, logo_url)"
-    )
-    .eq("is_active", true)
-    .order("posted_at", { ascending: false })
-    .limit(60);
-
-  if (company) query = query.ilike("company.name", `%${company}%`);
-  if (roleType) query = query.eq("role_type", roleType);
-  if (location) query = query.ilike("location", `%${location}%`);
-  if (keyword) query = query.ilike("title", `%${keyword}%`);
-  if (level === "undergrad") query = query.eq("is_phd", false);
-  if (level === "phd") query = query.eq("is_phd", true);
+  const query = applyPostingFilters(
+    supabase
+      .from("postings")
+      .select(
+        "id, title, location, role_type, url, posted_at, company:companies!inner(name, slug, logo_url)"
+      )
+      .eq("is_active", true)
+      .order("posted_at", { ascending: false })
+      .limit(60),
+    { company, roleType, location, keyword, level }
+  );
 
   const { data: postings, error } = await query;
 

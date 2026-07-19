@@ -2,14 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-
-type Filters = {
-  company: string;
-  roleType: string;
-  location: string;
-  keyword: string;
-  level: string;
-};
+import { postingFiltersToQueryString, type PostingFilters as Filters } from "@/lib/postingFilters";
 
 const ROLE_TYPES = [
   { value: "", label: "All roles" },
@@ -26,15 +19,9 @@ const LEVELS = [
 
 const TEXT_DEBOUNCE_MS = 400;
 
-function buildFeedUrl(filters: Filters) {
-  const params = new URLSearchParams();
-  if (filters.company) params.set("company", filters.company);
-  if (filters.roleType) params.set("roleType", filters.roleType);
-  if (filters.location) params.set("location", filters.location);
-  if (filters.keyword) params.set("keyword", filters.keyword);
-  if (filters.level) params.set("level", filters.level);
-  const query = params.toString();
-  return query ? `/feed?${query}` : "/feed";
+function buildFeedUrl(basePath: string, filters: Filters) {
+  const query = postingFiltersToQueryString(filters);
+  return query ? `${basePath}?${query}` : basePath;
 }
 
 export type FeedPreset = { id: string } & Filters & { name: string };
@@ -46,6 +33,7 @@ export function FeedFilters({
   initialKeyword,
   initialLevel,
   presets,
+  basePath = "/feed",
 }: {
   initialCompany: string;
   initialRoleType: string;
@@ -53,6 +41,7 @@ export function FeedFilters({
   initialKeyword: string;
   initialLevel: string;
   presets: FeedPreset[];
+  basePath?: string;
 }) {
   const router = useRouter();
   const [filters, setFilters] = useState<Filters>({
@@ -70,21 +59,24 @@ export function FeedFilters({
     clearTimeout(debounceRef.current);
     const next = { ...filters, ...patch };
     setFilters(next);
-    router.replace(buildFeedUrl(next));
+    router.replace(buildFeedUrl(basePath, next));
   }
 
   function applyDebounced(patch: Partial<Filters>) {
     const next = { ...filters, ...patch };
     setFilters(next);
     clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => router.replace(buildFeedUrl(next)), TEXT_DEBOUNCE_MS);
+    debounceRef.current = setTimeout(
+      () => router.replace(buildFeedUrl(basePath, next)),
+      TEXT_DEBOUNCE_MS
+    );
   }
 
   function clearFilters() {
     clearTimeout(debounceRef.current);
     const next = { company: "", roleType: "", location: "", keyword: "", level: "" };
     setFilters(next);
-    router.replace("/feed");
+    router.replace(basePath);
   }
 
   function applyPreset(id: string) {

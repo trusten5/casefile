@@ -2,6 +2,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
+import {
+  applyPostingFilters,
+  parsePostingFilters,
+  postingFiltersToQueryString,
+} from "@/lib/postingFilters";
+import { PublicHeader } from "@/components/PublicHeader";
 import { PostingRow } from "./(dashboard)/feed/PostingRow";
 import { FeedFilters } from "./(dashboard)/feed/FeedFilters";
 
@@ -22,39 +28,35 @@ function TeaserCard({ tab, heading, body }: { tab: string; heading: string; body
   );
 }
 
-// Public landing page: the feed itself is the hero, browsable by anyone.
-// Only signed-in visitors get redirected past it — everyone else sees a
-// live, searchable top-10 preview of the same feed at /feed.
-export default async function Home() {
+// Public landing page: the feed itself is the hero, browsable and
+// filterable by anyone, right here — no navigation away required. Only
+// signed-in visitors get redirected past it; "see the full feed" is the
+// only way to leave for the fuller (60-result, saved-filter) view at /feed.
+export default async function Home(props: PageProps<"/">) {
   const { userId } = await auth();
   if (userId) redirect("/dashboard");
 
+  const searchParams = await props.searchParams;
+  const filters = parsePostingFilters(searchParams);
+
   const supabase = getSupabase();
-  const { data: postings, error } = await supabase
-    .from("postings")
-    .select(
-      "id, title, location, role_type, url, posted_at, company:companies!inner(name, slug, logo_url)"
-    )
-    .eq("is_active", true)
-    .order("posted_at", { ascending: false })
-    .limit(10);
+  const query = applyPostingFilters(
+    supabase
+      .from("postings")
+      .select(
+        "id, title, location, role_type, url, posted_at, company:companies!inner(name, slug, logo_url)"
+      )
+      .eq("is_active", true)
+      .order("posted_at", { ascending: false })
+      .limit(10),
+    filters
+  );
+  const { data: postings, error } = await query;
+  const feedQuery = postingFiltersToQueryString(filters);
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
-        <span className="font-display text-lg font-semibold text-ink">Casefile</span>
-        <div className="flex items-center gap-5">
-          <Link href="/sign-in" className="text-sm font-medium text-ink-soft hover:text-ink">
-            Sign in
-          </Link>
-          <Link
-            href="/sign-up"
-            className="rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
-          >
-            Sign up free
-          </Link>
-        </div>
-      </header>
+      <PublicHeader />
 
       {/* hero: the live feed itself */}
       <section className="mx-auto w-full max-w-5xl px-6 pb-16 pt-4">
@@ -71,12 +73,13 @@ export default async function Home() {
         </p>
 
         <FeedFilters
-          initialCompany=""
-          initialRoleType=""
-          initialLocation=""
-          initialKeyword=""
-          initialLevel=""
+          initialCompany={filters.company}
+          initialRoleType={filters.roleType}
+          initialLocation={filters.location}
+          initialKeyword={filters.keyword}
+          initialLevel={filters.level}
           presets={[]}
+          basePath="/"
         />
 
         {error && (
@@ -98,7 +101,10 @@ export default async function Home() {
         </ul>
 
         <div className="mt-6">
-          <Link href="/feed" className="text-sm font-medium text-ink hover:underline">
+          <Link
+            href={feedQuery ? `/feed?${feedQuery}` : "/feed"}
+            className="text-sm font-medium text-ink hover:underline"
+          >
             See the full feed →
           </Link>
         </div>
