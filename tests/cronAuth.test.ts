@@ -31,4 +31,18 @@ describe("isValidCronRequest", () => {
     const request = new Request("http://localhost");
     expect(isValidCronRequest(request)).toBe(false);
   });
+
+  it("rejects a missing header when CRON_SECRET is unset", () => {
+    delete process.env.CRON_SECRET;
+    const request = new Request("http://localhost");
+    expect(isValidCronRequest(request)).toBe(false);
+  });
+
+  it("rejects an empty bearer token when CRON_SECRET is empty", () => {
+    process.env.CRON_SECRET = "";
+    const request = new Request("http://localhost", {
+      headers: { authorization: "Bearer " },
+    });
+    expect(isValidCronRequest(request)).toBe(false);
+  });
 });
