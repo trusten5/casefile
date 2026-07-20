@@ -1,9 +1,43 @@
 # Casefile
 
-A free job-search tracker: a public, searchable feed of internship/new-grad
-postings aggregated from company career pages, an application tracker with a
-funnel view, and a networking tracker for the contacts and referrals behind
-each application. Next.js (App Router) + Supabase + Clerk.
+**Every internship, new-grad, and full-time posting, in one feed — plus the
+tracker to go with it.**
+
+A free job-search tracker: a public, searchable feed of postings scraped
+straight from company career pages, an application tracker with a funnel
+view, and a networking tracker for the contacts and referrals behind each
+application.
+
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ECF8E?logo=supabase&logoColor=white)
+![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?logo=clerk&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)
+
+## Screenshots
+
+|                                Live feed preview                                |                              Full feed                              |
+| :-------------------------------------------------------------------------------: | :---------------------------------------------------------------------: |
+| ![Landing page — live filterable feed preview](docs/screenshots/landing.jpg) | ![Feed page — filterable postings list](docs/screenshots/feed.jpg) |
+
+![Companies directory — tracked companies and posting activity](docs/screenshots/companies.jpg)
+
+## What it does
+
+- **Public feed** (`/feed`) — no account needed. Filter by company, role
+  type, location, keyword, or level.
+- **Companies directory** (`/companies`) — every tracked company, posting
+  activity over time, split by internship vs. full-time.
+- **Application tracker** (`/applications`) — funnel view (applied → OA →
+  interview → offer/rejected), manual entries, and recommendations inferred
+  from your own application history.
+- **Networking tracker** (`/contacts`) — log contacts and referrals as a
+  tree (who introduced whom), with follow-up reminders.
+- **Automated multi-ATS scraping** — daily sync across Greenhouse, Lever,
+  and Ashby boards, plus a community-maintained feed for everything else.
+- **Broken-link review queue** — automated dead-link checks and
+  user-reported flags feed one admin queue.
 
 ## Setup
 
@@ -56,6 +90,7 @@ run/day; tighten the schedule in `vercel.json` if you're on Pro.
 Adding a company to scrape means editing `src/lib/scrapers/companies.ts`
 (`SEED_COMPANIES`) and redeploying — it's a hardcoded list, not DB-driven.
 Verify a board resolves before adding it:
+
 - Greenhouse: `https://boards-api.greenhouse.io/v1/boards/{token}/jobs`
 - Lever: `https://api.lever.co/v0/postings/{token}?mode=json`
 - Ashby: `https://api.ashbyhq.com/posting-api/job-board/{token}`
