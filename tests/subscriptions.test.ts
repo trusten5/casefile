@@ -37,6 +37,16 @@ describe("getUserTier", () => {
     expect(await getUserTier(getSupabase(), userId)).toBe("plus");
   });
 
+  it("returns the tier when status is trialing", async () => {
+    await getSupabase().from("subscriptions").insert({
+      user_id: userId,
+      stripe_customer_id: `cus_test_${Date.now()}`,
+      tier: "plus",
+      status: "trialing",
+    });
+    expect(await getUserTier(getSupabase(), userId)).toBe("plus");
+  });
+
   it("returns free when status is canceled", async () => {
     await getSupabase().from("subscriptions").insert({
       user_id: userId,
