@@ -32,26 +32,15 @@ export async function applyFromPosting(postingId: string, returnTo: string) {
     .single();
   if (postingError) throw postingError;
 
-  const { data: application, error: applicationError } = await supabase
-    .from("applications")
-    .insert({
-      user_id: userId,
-      company_id: posting.company_id,
-      posting_id: postingId,
-      role_title: posting.title,
-      status: "applied",
-      source: "feed",
-      role_type: posting.role_type,
-      is_phd: posting.is_phd,
-    })
-    .select("id")
-    .single();
-  if (applicationError) throw applicationError;
-
-  const { error: historyError } = await supabase
-    .from("status_history")
-    .insert({ application_id: application.id, status: "applied" });
-  if (historyError) throw historyError;
+  const { error: rpcError } = await supabase.rpc("create_application_with_history", {
+    p_user_id: userId,
+    p_company_id: posting.company_id,
+    p_posting_id: postingId,
+    p_role_title: posting.title,
+    p_role_type: posting.role_type,
+    p_is_phd: posting.is_phd,
+  });
+  if (rpcError) throw rpcError;
 
   revalidatePath(returnTo);
   revalidatePath("/applications");

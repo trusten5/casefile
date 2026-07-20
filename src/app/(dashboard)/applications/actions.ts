@@ -20,25 +20,17 @@ export async function createManualApplication(formData: FormData) {
 
   const companyId = await findOrCreateCompany(supabase, { name: companyName });
 
-  const { data: application, error } = await supabase
-    .from("applications")
-    .insert({
-      user_id: userId,
-      company_id: companyId,
-      role_title: roleTitle,
-      status,
-      source: "manual",
-      role_type: inferRoleType(roleTitle),
-      is_phd: isPhdRole(roleTitle),
-    })
-    .select("id")
-    .single();
+  const { error } = await supabase.rpc("create_application_with_history", {
+    p_user_id: userId,
+    p_company_id: companyId,
+    p_posting_id: null,
+    p_role_title: roleTitle,
+    p_role_type: inferRoleType(roleTitle),
+    p_is_phd: isPhdRole(roleTitle),
+    p_status: status,
+    p_source: "manual",
+  });
   if (error) throw error;
-
-  const { error: historyError } = await supabase
-    .from("status_history")
-    .insert({ application_id: application.id, status });
-  if (historyError) throw historyError;
 
   revalidatePath("/applications");
   revalidatePath("/dashboard");
