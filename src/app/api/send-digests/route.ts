@@ -6,6 +6,7 @@ import { applyPostingFilters } from "@/lib/postingFilters";
 import { isDigestDue } from "@/lib/digest";
 import { sendDigestBatch, type DigestEmail } from "@/lib/postmarkBatch";
 import { companyDisplayName } from "@/lib/companies";
+import { ACTIVE_STATUSES } from "@/lib/subscriptions";
 
 export const maxDuration = 60;
 
@@ -36,7 +37,7 @@ async function runDigestSend(request: NextRequest) {
       "user_id",
       dueUsers.map((u) => u.user_id)
     )
-    .eq("status", "active");
+    .in("status", ACTIVE_STATUSES);
   const activeUserIds = new Set((activeSubs ?? []).map((s) => s.user_id));
   const eligibleUsers = dueUsers.filter((u) => activeUserIds.has(u.user_id));
   if (eligibleUsers.length === 0) return NextResponse.json({ sent: 0 });
@@ -116,7 +117,7 @@ async function runDigestSend(request: NextRequest) {
       .in("user_id", sentUserIds);
   }
 
-  return NextResponse.json({ sent: emails.length });
+  return NextResponse.json({ sent: sentUserIds.length });
 }
 
 export const GET = runDigestSend;
