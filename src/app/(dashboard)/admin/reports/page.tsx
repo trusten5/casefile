@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { getSupabase } from "@/lib/supabase";
 import { isAdmin } from "@/lib/admin";
 import { Flash } from "@/components/Flash";
@@ -93,7 +94,13 @@ export default async function AdminReportsPage(props: PageProps<"/admin/reports"
   return (
     <div>
       <Flash message={flash} />
-      <h1 className="font-display text-2xl font-semibold text-ink">Reported links</h1>
+      <Link
+        href="/admin/content"
+        className="inline-block rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink"
+      >
+        Content draft →
+      </Link>
+      <h1 className="mt-4 font-display text-2xl font-semibold text-ink">Reported links</h1>
       <p className="mt-1 text-sm text-ink-soft">
         Postings someone flagged as broken — still live in the feed until you confirm or dismiss.
       </p>
