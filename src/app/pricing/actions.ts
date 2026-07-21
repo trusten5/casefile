@@ -4,8 +4,11 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getStripe } from "@/lib/stripe";
 import { getSupabase } from "@/lib/supabase";
+import { PRICE_TO_TIER } from "@/lib/stripeSubscriptionSync";
 
 export async function createCheckoutSession(priceId: string) {
+  if (!(priceId in PRICE_TO_TIER)) throw new Error("Invalid price");
+
   const { userId } = await auth();
   if (!userId) redirect(`/sign-up?redirect_url=${encodeURIComponent("/pricing")}`);
 
