@@ -10,6 +10,7 @@ import { ACTIVE_PILLARS as PILLARS } from "./pillars";
 import { getContentStats } from "./stats";
 import { generateCopy, type Draft } from "./generateCopy";
 import { pickAssetPath } from "./renderSlides";
+import { recentHooks, recordHook } from "./history";
 
 function localDateKey(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -48,7 +49,7 @@ async function main() {
 
     let post;
     try {
-      post = await generateCopy(pillar, stats);
+      post = await generateCopy(pillar, stats, recentHooks(pillar.key));
     } catch (err) {
       console.error(`[${label}] copy generation failed, skipping post:`, err);
       reviewLines.push(`## ${label} — SKIPPED (Claude API error)\n`);
@@ -59,6 +60,7 @@ async function main() {
     // at draft time — that's what makes it visible and editable in
     // draft.json instead of being re-picked randomly when render.ts runs.
     post.slides = post.slides.map((s) => ({ ...s, photo: pickAssetPath(s.assetType) }));
+    recordHook(pillar.key, post.hook);
 
     drafts.push({ label, pillarTitle: pillar.title, post });
     reviewLines.push(

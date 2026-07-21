@@ -48,12 +48,20 @@ const POST_SCHEMA = {
   required: ["hook", "slides", "caption", "hashtags"],
 };
 
-export async function generateCopy(pillar: Pillar, stats: ContentStats | null): Promise<GeneratedPost> {
+export async function generateCopy(
+  pillar: Pillar,
+  stats: ContentStats | null,
+  recentHooks: string[] = []
+): Promise<GeneratedPost> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not set");
 
   const statsBlock = stats
     ? `\n\nREAL VERIFIED DATA (use only these numbers — never invent, round dramatically, or estimate beyond what's here):\n${JSON.stringify(stats, null, 2)}`
+    : "";
+
+  const historyBlock = recentHooks.length
+    ? `\n\nHOOKS ALREADY USED FOR THIS PILLAR RECENTLY — do not reuse any of these, or anything that's just a light reword of one of them. Come at this from a genuinely different angle:\n${recentHooks.map((h) => `- ${h}`).join("\n")}`
     : "";
 
   const system = `You write slideshow scripts for a faceless TikTok account promoting a job-search tracking app, aimed at students/new grads applying to internships and jobs. Voice: direct, a little wry, zero corporate tone, no emoji spam, no hype language ("game-changer", "you won't believe").
@@ -62,8 +70,9 @@ STYLE RULES — apply to every slide:
 - Terse: cut filler, qualifiers, and throat-clearing. Combine each slide's "what" and "why" into the tightest phrasing that still lands — hook slide under 14 words, every other slide under 20. If a word can be cut without losing meaning, cut it.
 - Accurate: never relabel a number's unit. If a stat counts postings, call it postings, not companies (and vice versa). Never round, restate, or paraphrase a real number differently than it's given.
 - Strong hooks: hyper-specific — a real number + a concrete action + a concrete stake. No generic openers ("here's the truth about...", "let's talk about..."). Front-load the single most surprising detail, don't build up to it.
+- Any "e.g." example in the brief below illustrates the PATTERN only — it's a real post from the past, not a template. Never reuse it verbatim or as a near-paraphrase; invent your own specific hook and tactics every time.
 
-${pillar.brief}${statsBlock}`;
+${pillar.brief}${statsBlock}${historyBlock}`;
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",

@@ -51,5 +51,6 @@ next-env.d.ts
 # content engine — your local asset library and generated batches, not app code
 /content/assets/*/*
 /content/output/*
+/content/state/*
 !/content/assets/*/.gitkeep
 !/content/output/.gitkeep
