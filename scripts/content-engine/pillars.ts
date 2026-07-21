@@ -17,10 +17,10 @@ export const PILLARS: Pillar[] = [
     key: "tactical-advice",
     title: "Pillar 1 — Tactical advice",
     needsStats: false,
-    brief: `Slide 1 (hook): [Specific number] + [specific action] + [specific stakes]. e.g. "3 resume lines that get you auto-rejected by FAANG ATS".
+    brief: `Slide 1 (hook): [Specific number] + [specific action] + [specific stakes]. The number is the count of tactics you're about to list (e.g. "5 tracking habits that get students callbacks") — never an unsourced population statistic like "75% of resumes get rejected"; that's exactly the kind of claim a recruiter can (and will) call out as made up.
 Slides 2-N: one tactic per slide. Lead with the "what," follow with the "why it works."
 Last slide: one-line summary + soft sign-off ("saved you 20 min of guessing").
-Rule: every tactic must be something you could defend if a recruiter commented "that's not true." Only include tactics that are actually defensible — do not invent a stat or claim to sound more authoritative.`,
+Rule: every tactic must be something you could defend if a recruiter commented "that's not true." Only include tactics that are actually defensible — do not invent or cite an unsourced statistic anywhere in this post.`,
   },
   {
     key: "relatability",
@@ -68,3 +68,10 @@ Last slide: soft close. "Link in bio if you want it too" — one line, no urgenc
 Rule: this is the only post allowed to reference the product directly, and even then only as "the thing I built for myself," never as a pitch.`,
   },
 ];
+
+// Pillars 2, 4, 5 didn't land — paused, not deleted, in case they're worth
+// revisiting later. Active rotation is just tactical advice, networking
+// tactics, and the CTA.
+export const ACTIVE_PILLARS: Pillar[] = ["tactical-advice", "networking-tactics", "cta"].map(
+  (key) => PILLARS.find((p) => p.key === key)!
+);

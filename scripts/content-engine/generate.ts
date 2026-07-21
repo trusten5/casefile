@@ -1,11 +1,11 @@
-// Generates one full 6-post batch (5 pillars + CTA) for the faceless TikTok
-// account: AI-drafted copy grounded on real DB stats, rendered into
-// ready-to-upload slide PNGs.
+// Generates one batch (tactical advice, networking tactics, CTA) for the
+// faceless TikTok account: AI-drafted copy grounded on real DB stats where
+// applicable, rendered into ready-to-upload slide PNGs.
 //
 // Run with: npx tsx scripts/content-engine/generate.ts
 import { mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
-import { PILLARS } from "./pillars";
+import { ACTIVE_PILLARS as PILLARS } from "./pillars";
 import { getContentStats } from "./stats";
 import { generateCopy } from "./generateCopy";
 import { renderSlide } from "./renderSlides";

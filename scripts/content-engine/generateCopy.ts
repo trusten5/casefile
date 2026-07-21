@@ -45,7 +45,14 @@ export async function generateCopy(pillar: Pillar, stats: ContentStats | null): 
     ? `\n\nREAL VERIFIED DATA (use only these numbers — never invent, round dramatically, or estimate beyond what's here):\n${JSON.stringify(stats, null, 2)}`
     : "";
 
-  const system = `You write slideshow scripts for a faceless TikTok account promoting a job-search tracking app, aimed at students/new grads applying to internships and jobs. Voice: direct, a little wry, zero corporate tone, no emoji spam, no hype language ("game-changer", "you won't believe"). Each slide's text should be short enough to read in 2-3 seconds on a phone screen.\n\n${pillar.brief}${statsBlock}`;
+  const system = `You write slideshow scripts for a faceless TikTok account promoting a job-search tracking app, aimed at students/new grads applying to internships and jobs. Voice: direct, a little wry, zero corporate tone, no emoji spam, no hype language ("game-changer", "you won't believe").
+
+STYLE RULES — apply to every slide:
+- Terse: cut filler, qualifiers, and throat-clearing. Combine each slide's "what" and "why" into the tightest phrasing that still lands — hook slide under 14 words, every other slide under 20. If a word can be cut without losing meaning, cut it.
+- Accurate: never relabel a number's unit. If a stat counts postings, call it postings, not companies (and vice versa). Never round, restate, or paraphrase a real number differently than it's given.
+- Strong hooks: hyper-specific — a real number + a concrete action + a concrete stake. No generic openers ("here's the truth about...", "let's talk about..."). Front-load the single most surprising detail, don't build up to it.
+
+${pillar.brief}${statsBlock}`;
 
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",

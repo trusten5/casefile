@@ -31,7 +31,12 @@ function pickAssetDataUri(assetType: AssetType): string | null {
 
 const TEXT_MAX_WIDTH = SIZE.width - 72 * 2;
 
-function textOverlay(opts: { text: string; slideIndex: number; slideCount: number; scrim: string }) {
+// Over a photo/screenshot, text sits on a bottom-anchored gradient — dark
+// enough at the bottom to stay legible over busy UI screenshots, fading to
+// clear at the top so the image itself still reads as the CTA's "show, don't
+// pitch" proof. Over a solid color there's nothing to compete with, so the
+// text is just centered with no scrim.
+function textOverlay(opts: { text: string; slideIndex: number; slideCount: number; hasImage: boolean }) {
   return (
     <div
       style={{
@@ -41,9 +46,11 @@ function textOverlay(opts: { text: string; slideIndex: number; slideCount: numbe
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: opts.hasImage ? "flex-end" : "center",
         padding: 72,
-        background: opts.scrim,
+        background: opts.hasImage
+          ? "linear-gradient(to top, rgba(20,24,23,0.95) 0%, rgba(20,24,23,0.82) 35%, rgba(20,24,23,0) 75%)"
+          : "transparent",
       }}
     >
       <div style={{ maxWidth: TEXT_MAX_WIDTH, fontSize: 26, color: CREAM, opacity: 0.7, letterSpacing: 2, marginBottom: 32 }}>
@@ -63,7 +70,7 @@ export async function renderSlide(opts: {
   slideCount: number;
 }): Promise<ArrayBuffer> {
   const image = pickAssetDataUri(opts.assetType);
-  const overlay = textOverlay({ ...opts, scrim: image ? "rgba(29,34,32,0.55)" : "transparent" });
+  const overlay = textOverlay({ ...opts, hasImage: Boolean(image) });
 
   const content = image ? (
     <div style={{ width: "100%", height: "100%", display: "flex", position: "relative", fontFamily: "serif" }}>
