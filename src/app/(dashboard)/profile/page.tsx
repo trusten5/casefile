@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
@@ -9,8 +10,10 @@ import {
   type FilterScope,
   type SuggestedPreset,
 } from "@/lib/preferences";
+import { getUserTier } from "@/lib/subscriptions";
 import { ROLE_TYPE_LABELS } from "@/lib/roleType";
 import { updatePreferences, createSavedFilter, deleteSavedFilter, setDefaultFilter } from "./actions";
+import { createPortalSession } from "@/app/pricing/actions";
 import { OptionalField } from "./OptionalField";
 
 export const dynamic = "force-dynamic";
@@ -196,6 +199,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
   const searchParams = await props.searchParams;
   const flash = typeof searchParams.flash === "string" ? searchParams.flash : undefined;
   const supabase = getSupabase();
+  const tier = userId ? await getUserTier(supabase, userId) : "free";
 
   const [preferences, { data: filters, error }] = await Promise.all([
     userId
@@ -231,6 +235,38 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
       <p className="mt-1 text-sm text-ink-soft">
         Preferences, saved searches, and a few details about you.
       </p>
+
+      <section className="mt-10 rounded-xl border border-paper-line p-6">
+        <h2 className="font-display text-lg font-semibold text-ink">Subscription</h2>
+        {tier === "free" ? (
+          <>
+            <p className="mt-2 text-sm text-ink-soft">
+              You&apos;re on the free plan. Upgrade to Plus for an email digest of new
+              postings matching your saved filter.
+            </p>
+            <Link
+              href="/pricing"
+              className="mt-4 inline-block rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink hover:border-ink-soft"
+            >
+              See plans
+            </Link>
+          </>
+        ) : (
+          <>
+            <p className="mt-2 text-sm text-ink-soft">
+              Current plan: <span className="font-medium text-ink">{tier === "pro" ? "Pro" : "Plus"}</span>
+            </p>
+            <form action={createPortalSession}>
+              <button
+                type="submit"
+                className="mt-4 rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink hover:border-ink-soft"
+              >
+                Manage subscription
+              </button>
+            </form>
+          </>
+        )}
+      </section>
 
       <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-ink">About you</h2>

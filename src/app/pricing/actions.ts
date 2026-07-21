@@ -41,3 +41,24 @@ export async function createCheckoutSession(priceId: string) {
   if (!session.url) throw new Error("Stripe did not return a checkout URL");
   redirect(session.url);
 }
+
+export async function createPortalSession() {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
+  const supabase = getSupabase();
+  const { data } = await supabase
+    .from("subscriptions")
+    .select("stripe_customer_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!data) redirect("/pricing");
+
+  const stripe = getStripe();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const session = await stripe.billingPortal.sessions.create({
+    customer: data.stripe_customer_id,
+    return_url: `${siteUrl}/profile`,
+  });
+  redirect(session.url);
+}
