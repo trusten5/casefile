@@ -9,6 +9,7 @@ import { join } from "path";
 import { ACTIVE_PILLARS as PILLARS } from "./pillars";
 import { getContentStats } from "./stats";
 import { generateCopy, type Draft } from "./generateCopy";
+import { pickAssetPath } from "./renderSlides";
 
 function localDateKey(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -54,6 +55,11 @@ async function main() {
       continue;
     }
 
+    // Resolve each slide's category (assetType) to one specific filename now,
+    // at draft time — that's what makes it visible and editable in
+    // draft.json instead of being re-picked randomly when render.ts runs.
+    post.slides = post.slides.map((s) => ({ ...s, photo: pickAssetPath(s.assetType) }));
+
     drafts.push({ label, pillarTitle: pillar.title, post });
     reviewLines.push(
       `## ${label} — ${pillar.title}`,
@@ -61,7 +67,7 @@ async function main() {
       pillar.needsStats
         ? "Numbers: verify against the stats bundle logged above before posting."
         : "Defensibility check: could you defend every tactic/claim on this post if challenged?",
-      ...post.slides.map((s, idx) => `  ${label}/slide-${idx + 1}.png — ${s.text}`),
+      ...post.slides.map((s, idx) => `  ${label}/slide-${idx + 1}.png (photo: ${s.photo ?? "none available"}) — ${s.text}`),
       ""
     );
     console.log(`[${label}] done — ${post.slides.length} slides`);

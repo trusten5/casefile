@@ -35,6 +35,7 @@ async function main() {
       const slide = post.slides[s];
       const png = await renderSlide({
         text: slide.text,
+        photo: slide.photo ?? null,
         assetType: slide.assetType,
         slideIndex: s,
         slideCount: post.slides.length,

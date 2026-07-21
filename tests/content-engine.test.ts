@@ -25,9 +25,10 @@ describe("getContentStats", () => {
 });
 
 describe("renderSlide", () => {
-  it("produces a valid PNG even with no local assets", async () => {
+  it("falls back gracefully when the given photo filename doesn't exist", async () => {
     const png = await renderSlide({
       text: "test slide",
+      photo: "this-file-does-not-exist.jpg",
       assetType: "backgrounds",
       slideIndex: 0,
       slideCount: 1,

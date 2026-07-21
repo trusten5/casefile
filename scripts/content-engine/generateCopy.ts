@@ -3,7 +3,10 @@ import type { ContentStats } from "./stats";
 
 export interface GeneratedPost {
   hook: string;
-  slides: { text: string; assetType: AssetType }[];
+  // `photo` is filled in by generate.ts right after the model responds —
+  // the model only chooses a category (assetType); generate.ts resolves
+  // that to one specific filename so it's visible/editable in draft.json.
+  slides: { text: string; assetType: AssetType; photo?: string | null }[];
   caption: string;
   hashtags: string[];
 }

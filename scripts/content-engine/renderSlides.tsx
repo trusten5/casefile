@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { readFileSync, readdirSync } from "fs";
+import { existsSync, readFileSync, readdirSync } from "fs";
 import { join } from "path";
 import type { AssetType } from "./pillars";
 
@@ -18,25 +18,53 @@ const FALLBACK_ORDER: AssetType[] = ["photos", "backgrounds", "pinterest"];
 function listImages(assetType: AssetType): string[] {
   const dir = join(ASSETS_DIR, assetType);
   try {
-    return readdirSync(dir)
-      .filter((f) => IMAGE_EXT.test(f))
-      .map((f) => join(dir, f));
+    return readdirSync(dir).filter((f) => IMAGE_EXT.test(f));
   } catch {
     return [];
   }
 }
 
-function pickAssetDataUri(assetType: AssetType): string | null {
+// Picks one image's bare filename (not a full path) for the requested
+// category, falling back across other categories if it's empty. Called at
+// draft time (generate.ts) so the exact chosen file is visible — and
+// editable — in draft.json; render time just loads whatever filename ended
+// up there instead of re-picking.
+export function pickAssetPath(assetType: AssetType): string | null {
   const order = [assetType, ...FALLBACK_ORDER.filter((t) => t !== assetType)];
   for (const type of order) {
     const files = listImages(type);
     if (files.length === 0) continue;
-    const path = files[Math.floor(Math.random() * files.length)];
-    const ext = path.split(".").pop()!.toLowerCase();
-    const bytes = readFileSync(path);
-    return `data:${MIME[ext]};base64,${bytes.toString("base64")}`;
+    return files[Math.floor(Math.random() * files.length)];
   }
   return null;
+}
+
+function dataUriFor(fullPath: string): string | null {
+  const ext = fullPath.split(".").pop()!.toLowerCase();
+  const mime = MIME[ext];
+  if (!mime) return null;
+  return `data:${mime};base64,${readFileSync(fullPath).toString("base64")}`;
+}
+
+// Looks up a filename (as stored in draft.json, possibly hand-edited to a
+// different file) across every asset category by bare filename — the
+// editor doesn't need to know or type which category folder it's in.
+function resolveAssetDataUri(filename: string): string | null {
+  for (const type of FALLBACK_ORDER) {
+    const fullPath = join(ASSETS_DIR, type, filename);
+    if (existsSync(fullPath)) return dataUriFor(fullPath);
+  }
+  return null;
+}
+
+function loadImage(opts: { photo: string | null; assetType: AssetType }): string | null {
+  if (opts.photo) {
+    const direct = resolveAssetDataUri(opts.photo);
+    if (direct) return direct;
+    console.warn(`Photo "${opts.photo}" not found in content/assets/ — picking a random replacement.`);
+  }
+  const fallbackFilename = pickAssetPath(opts.assetType);
+  return fallbackFilename ? resolveAssetDataUri(fallbackFilename) : null;
 }
 
 const CARD_MAX_WIDTH = 900;
@@ -92,11 +120,12 @@ function textCard(opts: { text: string; slideIndex: number; slideCount: number; 
 
 export async function renderSlide(opts: {
   text: string;
+  photo: string | null;
   assetType: AssetType;
   slideIndex: number;
   slideCount: number;
 }): Promise<ArrayBuffer> {
-  const image = pickAssetDataUri(opts.assetType);
+  const image = loadImage(opts);
   const position = opts.slideIndex === 0 ? "center" : "bottom";
   const card = textCard({ ...opts, position });
 
