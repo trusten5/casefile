@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/applications", label: "Applications" },
   { href: "/contacts", label: "Contacts" },
   { href: "/profile", label: "Profile" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 // /feed and /companies (the only routes under this layout that render for
@@ -19,6 +20,7 @@ const NAV_LINKS = [
 const PUBLIC_NAV_LINKS = [
   { href: "/feed", label: "Feed" },
   { href: "/companies", label: "Companies" },
+  { href: "/pricing", label: "Pricing" },
 ];
 
 // Account identity/sign-out (Clerk's UserButton) lives inside /profile now,

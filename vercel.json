@@ -4,6 +4,10 @@
     {
       "path": "/api/sync-postings",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/send-digests",
+      "schedule": "0 14 * * *"
     }
   ]
 }
