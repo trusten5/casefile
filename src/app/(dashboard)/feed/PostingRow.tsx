@@ -3,8 +3,9 @@ import { companyDisplayName, companyLogoUrl, companySlug } from "@/lib/companies
 import { formatPostedDate } from "@/lib/dates";
 import { ROLE_TYPE_LABELS, ROLE_TYPE_STYLES } from "@/lib/roleType";
 import { CompanyLogo } from "@/components/CompanyLogo";
-import { savePosting, applyFromPosting, reportBrokenLink } from "./actions";
+import { savePosting, unsavePosting, applyFromPosting, reportBrokenLink } from "./actions";
 import { ApplyControl } from "./ApplyControl";
+import { SavePostingToggle } from "./SavePostingToggle";
 
 type CompanyInfo = { name: string; logo_url?: string | null; slug?: string | null };
 
@@ -33,6 +34,7 @@ export function PostingRow({
   returnTo: string;
 }) {
   const save = savePosting.bind(null, posting.id, returnTo);
+  const unsave = unsavePosting.bind(null, posting.id, returnTo);
   const apply = applyFromPosting.bind(null, posting.id, returnTo);
   const reportBroken = reportBrokenLink.bind(null, posting.id, returnTo);
   const companyName = companyDisplayName(posting.company);
@@ -76,15 +78,7 @@ export function PostingRow({
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-3">
-        <form action={save}>
-          <button
-            type="submit"
-            disabled={isSaved}
-            className="rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink disabled:opacity-50"
-          >
-            {isSaved ? "Saved" : "Save"}
-          </button>
-        </form>
+        <SavePostingToggle initialSaved={isSaved} onSave={save} onUnsave={unsave} />
         <ApplyControl
           url={posting.url}
           initialApplied={isApplied}

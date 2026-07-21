@@ -6,6 +6,10 @@ import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import { notifyAdminOfReport } from "@/lib/notify";
 
+// Plain async return (no redirect/flash) rather than the older
+// form-submit-and-reload pattern — called directly from a client toggle
+// (SavePostingToggle) the same way saveCompany/unsaveCompany already are,
+// so save/unsave can flip in place without a full page navigation.
 export async function savePosting(postingId: string, returnTo: string) {
   const { userId } = await auth();
   if (!userId) redirect(`/sign-up?redirect_url=${encodeURIComponent(returnTo)}`);
@@ -17,7 +21,21 @@ export async function savePosting(postingId: string, returnTo: string) {
   if (error) throw error;
 
   revalidatePath(returnTo);
-  redirect(`${returnTo}?flash=${encodeURIComponent("Saved")}`);
+}
+
+export async function unsavePosting(postingId: string, returnTo: string) {
+  const { userId } = await auth();
+  if (!userId) redirect(`/sign-up?redirect_url=${encodeURIComponent(returnTo)}`);
+  const supabase = getSupabase();
+
+  const { error } = await supabase
+    .from("saved_postings")
+    .delete()
+    .eq("user_id", userId)
+    .eq("posting_id", postingId);
+  if (error) throw error;
+
+  revalidatePath(returnTo);
 }
 
 export async function applyFromPosting(postingId: string, returnTo: string) {
