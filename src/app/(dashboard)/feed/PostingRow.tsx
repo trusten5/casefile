@@ -3,8 +3,9 @@ import { companyDisplayName, companyLogoUrl, companySlug } from "@/lib/companies
 import { formatPostedDate } from "@/lib/dates";
 import { ROLE_TYPE_LABELS, ROLE_TYPE_STYLES } from "@/lib/roleType";
 import { CompanyLogo } from "@/components/CompanyLogo";
-import { savePosting, applyFromPosting, reportBrokenLink } from "./actions";
+import { savePosting, unsavePosting, applyFromPosting, reportBrokenLink } from "./actions";
 import { ApplyControl } from "./ApplyControl";
+import { SavePostingToggle } from "./SavePostingToggle";
 
 type CompanyInfo = { name: string; logo_url?: string | null; slug?: string | null };
 
@@ -26,14 +27,21 @@ export function PostingRow({
   isSaved,
   isApplied,
   returnTo,
+  freeTier,
 }: {
   posting: Posting;
   isSaved: boolean;
   isApplied: boolean;
   returnTo: string;
+  // Optional and only meaningful where a caller actually wants the
+  // save-upsell banner (currently just /feed) — every other page that
+  // renders PostingRow (dashboard, applications, company detail) just
+  // omits it, and the toggle stays silent, same as before.
+  freeTier?: boolean;
 }) {
   const companyName = companyDisplayName(posting.company);
-  const save = savePosting.bind(null, posting.id, returnTo, companyName);
+  const save = savePosting.bind(null, posting.id, returnTo);
+  const unsave = unsavePosting.bind(null, posting.id, returnTo);
   const apply = applyFromPosting.bind(null, posting.id, returnTo);
   const reportBroken = reportBrokenLink.bind(null, posting.id, returnTo);
   const slug = companySlug(posting.company);
@@ -76,15 +84,13 @@ export function PostingRow({
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-3">
-        <form action={save}>
-          <button
-            type="submit"
-            disabled={isSaved}
-            className="rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink disabled:opacity-50"
-          >
-            {isSaved ? "Saved" : "Save"}
-          </button>
-        </form>
+        <SavePostingToggle
+          initialSaved={isSaved}
+          onSave={save}
+          onUnsave={unsave}
+          companyName={companyName}
+          freeTier={freeTier}
+        />
         <ApplyControl
           url={posting.url}
           initialApplied={isApplied}

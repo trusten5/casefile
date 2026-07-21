@@ -33,6 +33,7 @@ export function FeedFilters({
   initialKeyword,
   initialLevel,
   presets,
+  savedCompanies = [],
   basePath = "/feed",
 }: {
   initialCompany: string;
@@ -41,6 +42,7 @@ export function FeedFilters({
   initialKeyword: string;
   initialLevel: string;
   presets: FeedPreset[];
+  savedCompanies?: string[];
   basePath?: string;
 }) {
   const router = useRouter();
@@ -51,7 +53,17 @@ export function FeedFilters({
     keyword: initialKeyword,
     level: initialLevel,
   });
+  const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const matchingSavedCompanies = savedCompanies.filter((name) =>
+    name.toLowerCase().includes(filters.company.trim().toLowerCase())
+  );
+
+  function selectSavedCompany(name: string) {
+    setCompanyDropdownOpen(false);
+    applyImmediately({ company: name });
+  }
 
   // Selects apply immediately; free-text fields debounce so we're not
   // re-fetching on every keystroke.
@@ -103,14 +115,33 @@ export function FeedFilters({
           </select>
         </label>
       )}
-      <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
+      <label className="relative flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
         Company
         <input
           value={filters.company}
           onChange={(e) => applyDebounced({ company: e.target.value })}
+          onFocus={() => setCompanyDropdownOpen(true)}
+          onBlur={() => setTimeout(() => setCompanyDropdownOpen(false), 150)}
           placeholder="Search companies…"
+          autoComplete="off"
           className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         />
+        {companyDropdownOpen && matchingSavedCompanies.length > 0 && (
+          <ul className="absolute left-0 top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-paper-line bg-paper py-1 shadow-sm">
+            {matchingSavedCompanies.map((name) => (
+              <li key={name}>
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => selectSavedCompany(name)}
+                  className="block w-full px-3 py-1.5 text-left text-sm text-ink hover:bg-tab/20"
+                >
+                  ★ {name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </label>
       <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
         Role type

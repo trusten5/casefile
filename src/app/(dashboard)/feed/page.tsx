@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
 import { applyPostingFilters } from "@/lib/postingFilters";
 import { Flash } from "@/components/Flash";
-import { UpsellBanner } from "@/components/UpsellBanner";
+import { getUserTier, tierAtLeast } from "@/lib/subscriptions";
 import { PostingRow } from "./PostingRow";
 import { FeedFilters } from "./FeedFilters";
 
@@ -28,17 +28,32 @@ export default async function FeedPage(props: PageProps<"/feed">) {
   const { userId } = await auth();
   const searchParams = await props.searchParams;
   const flash = typeof searchParams.flash === "string" ? searchParams.flash : undefined;
-  const upsellCompany = typeof searchParams.upsell === "string" ? searchParams.upsell : undefined;
   const supabase = getSupabase();
 
-  const { data: presets } = userId
-    ? await supabase
-        .from("saved_filters")
-        .select("id, name, company, role_type, location, keyword, level, is_default")
-        .eq("user_id", userId)
-        .eq("scope", "feed")
-        .order("name")
-    : { data: [] as SavedFilterRow[] };
+  const [{ data: presets }, { data: savedCompanyRows }] = await Promise.all([
+    userId
+      ? supabase
+          .from("saved_filters")
+          .select("id, name, company, role_type, location, keyword, level, is_default")
+          .eq("user_id", userId)
+          .eq("scope", "feed")
+          .order("name")
+      : Promise.resolve({ data: [] as SavedFilterRow[] }),
+    userId
+      ? supabase.from("saved_companies").select("company:companies(name)").eq("user_id", userId)
+      : Promise.resolve({ data: [] as { company: { name: string } | { name: string }[] | null }[] }),
+  ]);
+
+  const savedCompanyNames = Array.from(
+    new Set(
+      (savedCompanyRows ?? [])
+        .map((r) => (Array.isArray(r.company) ? r.company[0]?.name : r.company?.name))
+        .filter((name): name is string => Boolean(name))
+    )
+  );
+
+  const tier = userId ? await getUserTier(supabase, userId) : "free";
+  const freeTier = !tierAtLeast(tier, "plus");
 
   // A bare visit (no filter keys in the URL at all) uses the default
   // preset's values, if one exists; the moment any filter key is present,
@@ -89,7 +104,6 @@ export default async function FeedPage(props: PageProps<"/feed">) {
   return (
     <div>
       <Flash message={flash} />
-      {upsellCompany && <UpsellBanner companyName={upsellCompany} />}
       <h1 className="font-display text-2xl font-semibold text-ink">Feed</h1>
       <p className="mt-1 font-mono text-xs text-ink-soft">Sorted by date posted — newest first.</p>
 
@@ -108,6 +122,7 @@ export default async function FeedPage(props: PageProps<"/feed">) {
           keyword: p.keyword,
           level: p.level,
         }))}
+        savedCompanies={savedCompanyNames}
       />
 
       {error && (
@@ -124,6 +139,7 @@ export default async function FeedPage(props: PageProps<"/feed">) {
             isSaved={savedIds.has(posting.id)}
             isApplied={appliedIds.has(posting.id)}
             returnTo="/feed"
+            freeTier={freeTier}
           />
         ))}
       </ul>
