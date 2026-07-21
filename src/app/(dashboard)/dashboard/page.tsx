@@ -4,12 +4,24 @@ import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
 import { STATUSES, getFunnelCounts } from "@/lib/applications";
 import { getUserPreferences } from "@/lib/preferences";
+import { computeStreak, localDateKey } from "@/lib/streak";
 import { Flash } from "@/components/Flash";
 import { PostingRow } from "../feed/PostingRow";
 
 function startOfTodayISO() {
   const date = new Date();
   date.setHours(0, 0, 0, 0);
+  return date.toISOString();
+}
+
+// Streak lookback window — plenty for any realistic streak, far cheaper
+// than scanning the whole applications table.
+const STREAK_LOOKBACK_DAYS = 60;
+
+function startOfDaysAgoISO(days: number) {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() - days);
   return date.toISOString();
 }
 
@@ -28,6 +40,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
     counts,
     preferences,
     todayResult,
+    streakResult,
     postingsResult,
     savedResult,
     savedCountResult,
@@ -41,6 +54,11 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId)
       .gte("applied_at", startOfTodayISO()),
+    supabase
+      .from("applications")
+      .select("applied_at")
+      .eq("user_id", userId)
+      .gte("applied_at", startOfDaysAgoISO(STREAK_LOOKBACK_DAYS)),
     supabase
       .from("postings")
       .select("id, title, location, role_type, url, posted_at, company:companies(name, logo_url, slug)")
@@ -70,6 +88,13 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
   const savedIds = new Set((savedResult.data ?? []).map((row) => row.posting_id));
   const appliedIds = new Set((appliedResult.data ?? []).map((row) => row.posting_id));
   const totalApplications = Object.values(counts).reduce((sum, n) => sum + n, 0);
+
+  const countsByDay: Record<string, number> = {};
+  for (const row of streakResult.data ?? []) {
+    const key = localDateKey(new Date(row.applied_at));
+    countsByDay[key] = (countsByDay[key] ?? 0) + 1;
+  }
+  const streak = computeStreak(countsByDay, preferences.dailyGoal);
   const latestPostings = postingsResult.data ?? [];
   const upcomingFollowUps = (followUpsResult.data ?? []).map((f) => ({
     id: f.id,
@@ -85,9 +110,12 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
-          <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Today</p>
+          <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Streak</p>
           <p className="font-display text-xl font-semibold text-ink">
-            {todayResult.count ?? 0} / {preferences.dailyGoal} applied
+            {streak} day{streak === 1 ? "" : "s"}
+          </p>
+          <p className="mt-1 text-xs text-ink-soft">
+            Today: {todayResult.count ?? 0} / {preferences.dailyGoal} applied
           </p>
         </div>
         <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
