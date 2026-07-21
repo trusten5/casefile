@@ -1,8 +1,9 @@
 import { timingSafeEqual } from "crypto";
 
 // Timing-safe compare so response latency can't leak how many leading
-// characters of CRON_SECRET a guess got right. Shared by every cron route
-// (sync-postings, send-digests) instead of each doing its own `!==` check.
+// characters of CRON_SECRET a guess got right. Shared by every route gated
+// by the same secret (sync-postings, send-digests, admin-summary) instead
+// of each doing its own `!==` check.
 export function isValidCronRequest(request: Request): boolean {
   const expected = process.env.CRON_SECRET ?? "";
   const header = request.headers.get("authorization") ?? "";
