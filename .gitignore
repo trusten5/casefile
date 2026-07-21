@@ -47,3 +47,10 @@ next-env.d.ts
 # Claude Code local session state — not part of the app
 /.claude/settings.local.json
 /.claude/scheduled_tasks.lock
+
+# content engine — your local asset library and generated batches, not app code
+/content/assets/*/*
+/content/output/*
+/content/state/*
+!/content/assets/*/.gitkeep
+!/content/output/.gitkeep
