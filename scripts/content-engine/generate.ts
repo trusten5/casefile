@@ -11,6 +11,7 @@ import { getContentStats } from "./stats";
 import { generateCopy, type Draft } from "./generateCopy";
 import { pickAssetPath } from "./renderSlides";
 import { recentHooks, recordHook } from "./history";
+import { getSupabase } from "../../src/lib/supabase";
 
 function localDateKey(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -78,6 +79,18 @@ async function main() {
   mkdirSync(batchDir, { recursive: true });
   writeFileSync(join(batchDir, "draft.json"), JSON.stringify(drafts, null, 2));
   writeFileSync(join(batchDir, "review.md"), reviewLines.join("\n"));
+
+  // Mirror to Supabase so /admin/content on the live app can show and edit
+  // today's draft too — purely additive, render.ts still works from the
+  // local file if this fails or if the row is never touched.
+  try {
+    await getSupabase()
+      .from("content_drafts")
+      .upsert({ batch_date: date, drafts, edited: false, updated_at: new Date().toISOString() });
+  } catch (err) {
+    console.error("Failed to mirror draft to Supabase (non-fatal):", err);
+  }
+
   console.log(`\nDraft ready: ${batchDir}`);
   console.log(`Review review.md (edit draft.json, not review.md, for changes), then run:`);
   console.log(`  npx tsx scripts/content-engine/render.ts ${date}`);

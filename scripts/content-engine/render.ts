@@ -6,6 +6,29 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 import { renderSlide } from "./renderSlides";
 import type { Draft } from "./generateCopy";
+import { getSupabase } from "../../src/lib/supabase";
+
+async function loadDrafts(date: string, localPath: string): Promise<Draft[]> {
+  // If you edited and clicked "Done editing" on /admin/content, that row is
+  // marked edited — use it instead of the local file. Otherwise (never
+  // touched the page, or the Supabase check fails) fall back to the local
+  // file exactly as before — the local pipeline never depends on the web
+  // page working.
+  try {
+    const { data } = await getSupabase()
+      .from("content_drafts")
+      .select("drafts, edited")
+      .eq("batch_date", date)
+      .maybeSingle();
+    if (data?.edited) {
+      console.log("Using the edited draft from /admin/content.");
+      return data.drafts as Draft[];
+    }
+  } catch (err) {
+    console.error("Supabase draft check failed (non-fatal), using local file:", err);
+  }
+  return JSON.parse(readFileSync(localPath, "utf8"));
+}
 
 async function main() {
   const date = process.argv[2];
@@ -21,7 +44,7 @@ async function main() {
     process.exit(1);
   }
 
-  const drafts: Draft[] = JSON.parse(readFileSync(draftPath, "utf8"));
+  const drafts: Draft[] = await loadDrafts(date, draftPath);
 
   for (const { label, post } of drafts) {
     console.log(`[${label}] rendering ${post.slides.length} slides...`);
