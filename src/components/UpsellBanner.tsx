@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 const SESSION_COUNT_KEY = "casefile_upsell_save_count";
 
 // Shown to free-tier users right after saving a posting/company — a nudge
-// toward Plus, not a permanent nag. Only appears on the 2nd and 3rd save of
-// a browser session (sessionStorage — resets when the tab closes), not
-// every single save; shared across both the /feed and company-save call
-// sites since they both mount this same component per save.
+// toward Plus, not a permanent nag. Only appears on the 3rd save of a
+// browser session (sessionStorage — resets when the tab closes), not every
+// single save; shared across both the /feed and company-save call sites
+// since they both mount this same component per save.
 export function UpsellBanner({ companyName }: { companyName: string }) {
   const [dismissed, setDismissed] = useState(false);
   const [eligible, setEligible] = useState(false);
@@ -23,7 +23,7 @@ export function UpsellBanner({ companyName }: { companyName: string }) {
     const count = Number(sessionStorage.getItem(SESSION_COUNT_KEY) ?? "0") + 1;
     sessionStorage.setItem(SESSION_COUNT_KEY, String(count));
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setEligible(count === 2 || count === 3);
+    setEligible(count === 3);
   }, []);
 
   if (!eligible || dismissed) return null;
