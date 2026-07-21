@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
 import { applyPostingFilters } from "@/lib/postingFilters";
 import { Flash } from "@/components/Flash";
+import { UpsellBanner } from "@/components/UpsellBanner";
 import { PostingRow } from "./PostingRow";
 import { FeedFilters } from "./FeedFilters";
 
@@ -27,6 +28,7 @@ export default async function FeedPage(props: PageProps<"/feed">) {
   const { userId } = await auth();
   const searchParams = await props.searchParams;
   const flash = typeof searchParams.flash === "string" ? searchParams.flash : undefined;
+  const upsellCompany = typeof searchParams.upsell === "string" ? searchParams.upsell : undefined;
   const supabase = getSupabase();
 
   const { data: presets } = userId
@@ -87,6 +89,7 @@ export default async function FeedPage(props: PageProps<"/feed">) {
   return (
     <div>
       <Flash message={flash} />
+      {upsellCompany && <UpsellBanner companyName={upsellCompany} />}
       <h1 className="font-display text-2xl font-semibold text-ink">Feed</h1>
       <p className="mt-1 font-mono text-xs text-ink-soft">Sorted by date posted — newest first.</p>
 

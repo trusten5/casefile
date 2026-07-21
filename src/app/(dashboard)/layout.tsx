@@ -10,17 +10,16 @@ const NAV_LINKS = [
   { href: "/applications", label: "Applications" },
   { href: "/contacts", label: "Contacts" },
   { href: "/profile", label: "Profile" },
-  { href: "/pricing", label: "Pricing" },
 ];
 
 // /feed and /companies (the only routes under this layout that render for
 // signed-out visitors — everything else is gated in proxy.ts) get this
 // instead: no Dashboard/Applications/Contacts/Profile links, since an
-// anonymous visitor can't use any of them.
+// anonymous visitor can't use any of them. Pricing now lives on /profile
+// (signed-in only), so there's nothing for an anonymous visitor to see there.
 const PUBLIC_NAV_LINKS = [
   { href: "/feed", label: "Feed" },
   { href: "/companies", label: "Companies" },
-  { href: "/pricing", label: "Pricing" },
 ];
 
 // Account identity/sign-out (Clerk's UserButton) lives inside /profile now,

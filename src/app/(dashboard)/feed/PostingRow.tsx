@@ -32,10 +32,10 @@ export function PostingRow({
   isApplied: boolean;
   returnTo: string;
 }) {
-  const save = savePosting.bind(null, posting.id, returnTo);
+  const companyName = companyDisplayName(posting.company);
+  const save = savePosting.bind(null, posting.id, returnTo, companyName);
   const apply = applyFromPosting.bind(null, posting.id, returnTo);
   const reportBroken = reportBrokenLink.bind(null, posting.id, returnTo);
-  const companyName = companyDisplayName(posting.company);
   const slug = companySlug(posting.company);
   const roleType = posting.role_type;
 

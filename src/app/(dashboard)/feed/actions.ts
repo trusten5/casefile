@@ -5,8 +5,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import { notifyAdminOfReport } from "@/lib/notify";
+import { getUserTier } from "@/lib/subscriptions";
 
-export async function savePosting(postingId: string, returnTo: string) {
+// `companyName` comes bound from the calling row rather than looked up here
+// — it's only needed for the free-tier upsell banner's copy, not for the
+// save itself, so no extra query.
+export async function savePosting(postingId: string, returnTo: string, companyName: string) {
   const { userId } = await auth();
   if (!userId) redirect(`/sign-up?redirect_url=${encodeURIComponent(returnTo)}`);
   const supabase = getSupabase();
@@ -17,7 +21,10 @@ export async function savePosting(postingId: string, returnTo: string) {
   if (error) throw error;
 
   revalidatePath(returnTo);
-  redirect(`${returnTo}?flash=${encodeURIComponent("Saved")}`);
+
+  const tier = await getUserTier(supabase, userId);
+  const upsell = tier === "free" ? `&upsell=${encodeURIComponent(companyName)}` : "";
+  redirect(`${returnTo}?flash=${encodeURIComponent("Saved")}${upsell}`);
 }
 
 export async function applyFromPosting(postingId: string, returnTo: string) {

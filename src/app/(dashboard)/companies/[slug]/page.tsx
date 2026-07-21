@@ -8,6 +8,7 @@ import { formatPostedDate } from "@/lib/dates";
 import { PostingRow } from "../../feed/PostingRow";
 import { SaveCompanyButton } from "../SaveCompanyButton";
 import { saveCompany, unsaveCompany } from "../actions";
+import { getUserTier, tierAtLeast } from "@/lib/subscriptions";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +63,7 @@ export default async function CompanyDetailPage(props: PageProps<"/companies/[sl
   const savedIds = new Set((saved ?? []).map((row) => row.posting_id));
   const appliedIds = new Set((applied ?? []).map((row) => row.posting_id));
   const isCompanySaved = Boolean(savedCompany);
+  const tier = userId ? await getUserTier(supabase, userId) : "free";
 
   const rows = postings ?? [];
   const firstSeen = rows.reduce<string | null>(
@@ -85,7 +87,13 @@ export default async function CompanyDetailPage(props: PageProps<"/companies/[sl
             </p>
           </div>
         </div>
-        <SaveCompanyButton initialSaved={isCompanySaved} onSave={save} onUnsave={unsave} />
+        <SaveCompanyButton
+          initialSaved={isCompanySaved}
+          onSave={save}
+          onUnsave={unsave}
+          companyName={company.name}
+          freeTier={!tierAtLeast(tier, "plus")}
+        />
       </div>
 
       {userId && (

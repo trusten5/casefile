@@ -10,7 +10,7 @@ export async function createCheckoutSession(priceId: string) {
   if (!(priceId in PRICE_TO_TIER)) throw new Error("Invalid price");
 
   const { userId } = await auth();
-  if (!userId) redirect(`/sign-up?redirect_url=${encodeURIComponent("/pricing")}`);
+  if (!userId) redirect(`/sign-up?redirect_url=${encodeURIComponent("/profile")}`);
 
   const stripe = getStripe();
   const supabase = getSupabase();
@@ -30,8 +30,8 @@ export async function createCheckoutSession(priceId: string) {
     mode: "subscription",
     customer: existing?.stripe_customer_id,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${siteUrl}/pricing?flash=${encodeURIComponent("Subscription active — welcome!")}`,
-    cancel_url: `${siteUrl}/pricing?flash=${encodeURIComponent("Checkout canceled")}`,
+    success_url: `${siteUrl}/profile?flash=${encodeURIComponent("Subscription active — welcome!")}`,
+    cancel_url: `${siteUrl}/profile?flash=${encodeURIComponent("Checkout canceled")}`,
     // Carried onto the Subscription object itself (not just this session),
     // so every later webhook event — not only checkout.session.completed —
     // can resolve which Casefile user this Stripe subscription belongs to.
@@ -52,7 +52,7 @@ export async function createPortalSession() {
     .select("stripe_customer_id")
     .eq("user_id", userId)
     .maybeSingle();
-  if (!data) redirect("/pricing");
+  if (!data) redirect("/profile");
 
   const stripe = getStripe();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
