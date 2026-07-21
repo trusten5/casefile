@@ -2,7 +2,7 @@
 // reviewed (and optionally hand-edited) via generate.ts.
 //
 // Run with: npx tsx scripts/content-engine/render.ts <date>
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 import { renderSlide } from "./renderSlides";
 import type { Draft } from "./generateCopy";
@@ -26,6 +26,9 @@ async function main() {
   for (const { label, post } of drafts) {
     console.log(`[${label}] rendering ${post.slides.length} slides...`);
     const postDir = join(batchDir, label);
+    // Wipe first — re-rendering a shortened draft shouldn't leave stale
+    // higher-numbered slides from a previous, longer render.
+    rmSync(postDir, { recursive: true, force: true });
     mkdirSync(postDir, { recursive: true });
 
     for (let s = 0; s < post.slides.length; s++) {
