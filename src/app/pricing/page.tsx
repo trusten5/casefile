@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
-import { getUserTier } from "@/lib/subscriptions";
+import { getUserTier, tierAtLeast } from "@/lib/subscriptions";
 import { Flash } from "@/components/Flash";
 import { createCheckoutSession } from "./actions";
 
@@ -68,6 +68,14 @@ export default async function PricingPage({
               >
                 Coming soon
               </button>
+            ) : tierAtLeast(currentTier, plan.tier) ? (
+              <button
+                type="button"
+                disabled
+                className="mt-6 w-full rounded-full border border-paper-line px-4 py-2 text-sm font-medium text-ink-soft"
+              >
+                Included in your plan
+              </button>
             ) : (
               <form action={createCheckoutSession.bind(null, plan.annualPriceId)}>
                 <button
@@ -78,7 +86,7 @@ export default async function PricingPage({
                 </button>
               </form>
             )}
-            {currentTier !== plan.tier && plan.tier === "plus" && (
+            {!tierAtLeast(currentTier, plan.tier) && plan.tier === "plus" && (
               <form action={createCheckoutSession.bind(null, plan.monthlyPriceId)}>
                 <button
                   type="submit"
