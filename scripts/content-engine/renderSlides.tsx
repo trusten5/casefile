@@ -29,12 +29,16 @@ function pickAssetDataUri(assetType: AssetType): string | null {
   return `data:${MIME[ext]};base64,${bytes.toString("base64")}`;
 }
 
+const TEXT_MAX_WIDTH = SIZE.width - 72 * 2;
+
 function textOverlay(opts: { text: string; slideIndex: number; slideCount: number; scrim: string }) {
   return (
     <div
       style={{
         position: "absolute",
         inset: 0,
+        width: "100%",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -42,10 +46,12 @@ function textOverlay(opts: { text: string; slideIndex: number; slideCount: numbe
         background: opts.scrim,
       }}
     >
-      <div style={{ fontSize: 26, color: CREAM, opacity: 0.7, letterSpacing: 2, marginBottom: 32 }}>
+      <div style={{ maxWidth: TEXT_MAX_WIDTH, fontSize: 26, color: CREAM, opacity: 0.7, letterSpacing: 2, marginBottom: 32 }}>
         {`${opts.slideIndex + 1}/${opts.slideCount}`}
       </div>
-      <div style={{ fontSize: 58, fontWeight: 700, color: CREAM, lineHeight: 1.25 }}>{opts.text}</div>
+      <div style={{ maxWidth: TEXT_MAX_WIDTH, fontSize: 58, fontWeight: 700, color: CREAM, lineHeight: 1.25 }}>
+        {opts.text}
+      </div>
     </div>
   );
 }
