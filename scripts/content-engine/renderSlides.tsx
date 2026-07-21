@@ -8,35 +8,45 @@ const ASSETS_DIR = join(__dirname, "..", "..", "content", "assets");
 const IMAGE_EXT = /\.(jpe?g|png|webp)$/i;
 const MIME: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp" };
 
-// Brand colors from src/app/opengraph-image.tsx — kept consistent across
-// the marketing site and this content.
-const CREAM = "#ece7d9";
-const DARK = "#1d2220";
+// Every slide should carry a real photo. If the requested category is
+// empty, fall back to any other populated category before ever falling
+// back to a plain color — that plain-color case is just a safety net for
+// an empty asset library (see the fallback branch in renderSlide below),
+// not something that should show up once the library is populated.
+const FALLBACK_ORDER: AssetType[] = ["photos", "screenshots", "backgrounds", "pinterest"];
 
-function pickAssetDataUri(assetType: AssetType): string | null {
+function listImages(assetType: AssetType): string[] {
   const dir = join(ASSETS_DIR, assetType);
-  let files: string[];
   try {
-    files = readdirSync(dir).filter((f) => IMAGE_EXT.test(f));
+    return readdirSync(dir)
+      .filter((f) => IMAGE_EXT.test(f))
+      .map((f) => join(dir, f));
   } catch {
-    return null;
+    return [];
   }
-  if (files.length === 0) return null;
-
-  const file = files[Math.floor(Math.random() * files.length)];
-  const ext = file.split(".").pop()!.toLowerCase();
-  const bytes = readFileSync(join(dir, file));
-  return `data:${MIME[ext]};base64,${bytes.toString("base64")}`;
 }
 
-const TEXT_MAX_WIDTH = SIZE.width - 72 * 2;
+function pickAssetDataUri(assetType: AssetType): string | null {
+  const order = [assetType, ...FALLBACK_ORDER.filter((t) => t !== assetType)];
+  for (const type of order) {
+    const files = listImages(type);
+    if (files.length === 0) continue;
+    const path = files[Math.floor(Math.random() * files.length)];
+    const ext = path.split(".").pop()!.toLowerCase();
+    const bytes = readFileSync(path);
+    return `data:${MIME[ext]};base64,${bytes.toString("base64")}`;
+  }
+  return null;
+}
 
-// Over a photo/screenshot, text sits on a bottom-anchored gradient — dark
-// enough at the bottom to stay legible over busy UI screenshots, fading to
-// clear at the top so the image itself still reads as the CTA's "show, don't
-// pitch" proof. Over a solid color there's nothing to compete with, so the
-// text is just centered with no scrim.
-function textOverlay(opts: { text: string; slideIndex: number; slideCount: number; hasImage: boolean }) {
+const CARD_MAX_WIDTH = 900;
+
+// A floating white card with black text sits over the full-bleed photo —
+// no scrim/gradient on the photo itself. The hook slide's card is
+// centered (biggest, most "pop"); every other slide's card sits at the
+// bottom so the photo reads clearly up top.
+function textCard(opts: { text: string; slideIndex: number; slideCount: number; position: "center" | "bottom" }) {
+  const isHook = opts.slideIndex === 0;
   return (
     <div
       style={{
@@ -46,18 +56,35 @@ function textOverlay(opts: { text: string; slideIndex: number; slideCount: numbe
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: opts.hasImage ? "flex-end" : "center",
-        padding: 72,
-        background: opts.hasImage
-          ? "linear-gradient(to top, rgba(20,24,23,0.95) 0%, rgba(20,24,23,0.82) 35%, rgba(20,24,23,0) 75%)"
-          : "transparent",
+        alignItems: "center",
+        justifyContent: opts.position === "center" ? "center" : "flex-end",
+        padding: 56,
       }}
     >
-      <div style={{ maxWidth: TEXT_MAX_WIDTH, fontSize: 26, color: CREAM, opacity: 0.7, letterSpacing: 2, marginBottom: 32 }}>
-        {`${opts.slideIndex + 1}/${opts.slideCount}`}
-      </div>
-      <div style={{ maxWidth: TEXT_MAX_WIDTH, fontSize: 58, fontWeight: 700, color: CREAM, lineHeight: 1.25 }}>
-        {opts.text}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          maxWidth: CARD_MAX_WIDTH,
+          background: "#ffffff",
+          borderRadius: 28,
+          padding: 52,
+        }}
+      >
+        <div style={{ maxWidth: CARD_MAX_WIDTH, fontSize: 22, color: "#00000066", letterSpacing: 2, marginBottom: 20 }}>
+          {`${opts.slideIndex + 1}/${opts.slideCount}`}
+        </div>
+        <div
+          style={{
+            maxWidth: CARD_MAX_WIDTH,
+            fontSize: isHook ? 64 : 48,
+            fontWeight: 800,
+            color: "#000000",
+            lineHeight: 1.15,
+          }}
+        >
+          {opts.text}
+        </div>
       </div>
     </div>
   );
@@ -70,7 +97,8 @@ export async function renderSlide(opts: {
   slideCount: number;
 }): Promise<ArrayBuffer> {
   const image = pickAssetDataUri(opts.assetType);
-  const overlay = textOverlay({ ...opts, hasImage: Boolean(image) });
+  const position = opts.slideIndex === 0 ? "center" : "bottom";
+  const card = textCard({ ...opts, position });
 
   const content = image ? (
     <div style={{ width: "100%", height: "100%", display: "flex", position: "relative", fontFamily: "serif" }}>
@@ -82,7 +110,7 @@ export async function renderSlide(opts: {
         height={SIZE.height}
         style={{ objectFit: "cover", position: "absolute", inset: 0 }}
       />
-      {overlay}
+      {card}
     </div>
   ) : (
     <div
@@ -91,11 +119,11 @@ export async function renderSlide(opts: {
         height: "100%",
         display: "flex",
         position: "relative",
-        background: DARK,
+        background: "#ece7d9",
         fontFamily: "serif",
       }}
     >
-      {overlay}
+      {card}
     </div>
   );
 

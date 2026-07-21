@@ -8,6 +8,14 @@ export interface GeneratedPost {
   hashtags: string[];
 }
 
+// One entry per post in a batch's draft.json — written by generate.ts,
+// read back by render.ts once you've reviewed (and optionally edited) it.
+export interface Draft {
+  label: string;
+  pillarTitle: string;
+  post: GeneratedPost;
+}
+
 const MODEL = process.env.CONTENT_ENGINE_MODEL || "claude-sonnet-5";
 
 const POST_SCHEMA = {
