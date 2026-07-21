@@ -24,7 +24,7 @@ async function main() {
   const drafts: Draft[] = [];
   const reviewLines: string[] = [
     `# Content batch — ${date}\n`,
-    "Review below, edit draft.json if you want changes, then run:",
+    `Edit draft.json (NOT this file — this is just a summary and isn't read back) if you want changes, then run:`,
     `  npx tsx scripts/content-engine/render.ts ${date}`,
     "",
   ];
@@ -61,7 +61,7 @@ async function main() {
       pillar.needsStats
         ? "Numbers: verify against the stats bundle logged above before posting."
         : "Defensibility check: could you defend every tactic/claim on this post if challenged?",
-      ...post.slides.map((s, idx) => `  ${idx + 1}. ${s.text}`),
+      ...post.slides.map((s, idx) => `  ${label}/slide-${idx + 1}.png — ${s.text}`),
       ""
     );
     console.log(`[${label}] done — ${post.slides.length} slides`);
@@ -71,7 +71,7 @@ async function main() {
   writeFileSync(join(batchDir, "draft.json"), JSON.stringify(drafts, null, 2));
   writeFileSync(join(batchDir, "review.md"), reviewLines.join("\n"));
   console.log(`\nDraft ready: ${batchDir}`);
-  console.log(`Review review.md (edit draft.json for changes), then run:`);
+  console.log(`Review review.md (edit draft.json, not review.md, for changes), then run:`);
   console.log(`  npx tsx scripts/content-engine/render.ts ${date}`);
 }
 
