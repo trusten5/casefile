@@ -59,6 +59,7 @@ export function ApplyControl({
   const [pending, setPending] = useState(false);
   const [reported, setReported] = useState(false);
   const awaitingReturn = useRef(false);
+  const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleVisibility() {
@@ -71,6 +72,17 @@ export function ApplyControl({
     return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
 
+  useEffect(() => {
+    if (!showPrompt) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
+        setShowPrompt(false);
+      }
+    }
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [showPrompt]);
+
   function markApplied() {
     setApplied(true);
     setShowPrompt(false);
@@ -79,6 +91,7 @@ export function ApplyControl({
   }
 
   function reportBroken() {
+    setShowPrompt(false);
     setReported(true);
     onReportBroken();
   }
@@ -111,17 +124,25 @@ export function ApplyControl({
         />
         Applied
       </label>
-      <button
-        type="button"
-        onClick={reportBroken}
-        title="Report broken link"
-        className="text-ink-soft hover:text-status-rejected"
-      >
-        <FlagIcon />
-      </button>
+      <div className="group relative">
+        <button
+          type="button"
+          onClick={reportBroken}
+          aria-label="Report broken link"
+          className="text-ink-soft hover:text-status-rejected"
+        >
+          <FlagIcon />
+        </button>
+        <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-paper-line bg-paper px-2 py-1 text-xs text-ink opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+          Report broken link
+        </span>
+      </div>
 
       {showPrompt && (
-        <div className="absolute right-0 top-full z-10 mt-2 w-52 rounded-md border border-paper-line bg-paper p-3 shadow-md">
+        <div
+          ref={popupRef}
+          className="absolute right-0 top-full z-10 mt-2 w-52 rounded-md border border-paper-line bg-paper p-3 shadow-md"
+        >
           <p className="text-sm text-ink">Did you apply?</p>
           <div className="mt-2 flex gap-2">
             <button
@@ -139,6 +160,13 @@ export function ApplyControl({
               Not yet
             </button>
           </div>
+          <button
+            type="button"
+            onClick={reportBroken}
+            className="mt-2 text-xs text-ink-soft underline hover:text-status-rejected"
+          >
+            Report broken link instead
+          </button>
         </div>
       )}
     </div>
