@@ -7,6 +7,8 @@ export type UserPreferences = {
   experience: string | null;
   resumeUrl: string | null;
   coverLetterUrl: string | null;
+  digestEnabled: boolean;
+  digestCadence: "daily" | "weekly";
 };
 
 const DEFAULT_PREFERENCES: UserPreferences = {
@@ -16,6 +18,8 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   experience: null,
   resumeUrl: null,
   coverLetterUrl: null,
+  digestEnabled: false,
+  digestCadence: "daily",
 };
 
 // Most users won't have a row yet (only created once they save something on
@@ -27,7 +31,9 @@ export async function getUserPreferences(
 ): Promise<UserPreferences> {
   const { data } = await supabase
     .from("user_preferences")
-    .select("daily_goal, school, major, experience, resume_url, cover_letter_url")
+    .select(
+      "daily_goal, school, major, experience, resume_url, cover_letter_url, digest_enabled, digest_cadence"
+    )
     .eq("user_id", userId)
     .maybeSingle();
   if (!data) return DEFAULT_PREFERENCES;
@@ -38,6 +44,8 @@ export async function getUserPreferences(
     experience: data.experience,
     resumeUrl: data.resume_url,
     coverLetterUrl: data.cover_letter_url,
+    digestEnabled: data.digest_enabled,
+    digestCadence: data.digest_cadence,
   };
 }
 

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import type { FilterScope } from "@/lib/preferences";
+import { getUserTier, tierAtLeast } from "@/lib/subscriptions";
 
 export async function updatePreferences(formData: FormData) {
   const { userId } = await auth();
@@ -100,4 +101,46 @@ export async function setDefaultFilter(id: string, scope: FilterScope, makeDefau
 
   revalidatePath("/profile");
   revalidatePath(`/${scope}`);
+}
+
+export async function updateDigestPreferences(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Not signed in");
+  const supabase = getSupabase();
+
+  // Re-check tier server-side — the UI only shows this form to Plus/Pro
+  // users, but a direct POST shouldn't be able to bypass that.
+  const tier = await getUserTier(supabase, userId);
+  if (!tierAtLeast(tier, "plus")) throw new Error("Requires a Plus subscription");
+
+  const digestEnabled = formData.get("digestEnabled") === "on";
+  const digestCadence = String(formData.get("digestCadence") ?? "daily");
+  if (digestCadence !== "daily" && digestCadence !== "weekly") throw new Error("Invalid cadence");
+
+  if (digestEnabled) {
+    const { data: defaultFilter } = await supabase
+      .from("saved_filters")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("scope", "feed")
+      .eq("is_default", true)
+      .maybeSingle();
+    if (!defaultFilter) {
+      throw new Error("Set a default feed filter below before enabling the digest");
+    }
+  }
+
+  const { error } = await supabase.from("user_preferences").upsert(
+    {
+      user_id: userId,
+      digest_enabled: digestEnabled,
+      digest_cadence: digestCadence,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" }
+  );
+  if (error) throw error;
+
+  revalidatePath("/profile");
+  redirect(`/profile?flash=${encodeURIComponent(digestEnabled ? "Digest enabled" : "Digest updated")}`);
 }

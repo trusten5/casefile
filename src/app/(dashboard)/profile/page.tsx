@@ -10,9 +10,15 @@ import {
   type FilterScope,
   type SuggestedPreset,
 } from "@/lib/preferences";
-import { getUserTier } from "@/lib/subscriptions";
+import { getUserTier, tierAtLeast } from "@/lib/subscriptions";
 import { ROLE_TYPE_LABELS } from "@/lib/roleType";
-import { updatePreferences, createSavedFilter, deleteSavedFilter, setDefaultFilter } from "./actions";
+import {
+  updatePreferences,
+  createSavedFilter,
+  deleteSavedFilter,
+  setDefaultFilter,
+  updateDigestPreferences,
+} from "./actions";
 import { createPortalSession } from "@/app/pricing/actions";
 import { OptionalField } from "./OptionalField";
 
@@ -211,6 +217,8 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
           experience: null,
           resumeUrl: null,
           coverLetterUrl: null,
+          digestEnabled: false,
+          digestCadence: "daily" as const,
         }),
     userId
       ? supabase
@@ -267,6 +275,41 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
           </>
         )}
       </section>
+
+      {tierAtLeast(tier, "plus") && (
+        <section className="mt-10">
+          <h2 className="font-display text-lg font-semibold text-ink">Email digest</h2>
+          <p className="mt-2 text-sm text-ink-soft">
+            Requires a default feed filter (set one below) — the digest emails
+            whatever that filter would show, since your last send.
+          </p>
+          <form action={updateDigestPreferences} className="mt-4 flex flex-wrap items-center gap-4">
+            <label className="flex items-center gap-2 text-sm text-ink">
+              <input
+                type="checkbox"
+                name="digestEnabled"
+                defaultChecked={preferences.digestEnabled}
+                className="h-4 w-4"
+              />
+              Enabled
+            </label>
+            <select
+              name="digestCadence"
+              defaultValue={preferences.digestCadence}
+              className="rounded-md border border-paper-line px-3 py-1.5 text-sm"
+            >
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly (Mondays)</option>
+            </select>
+            <button
+              type="submit"
+              className="rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink hover:border-ink-soft"
+            >
+              Save
+            </button>
+          </form>
+        </section>
+      )}
 
       <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-ink">About you</h2>
