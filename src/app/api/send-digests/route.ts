@@ -65,7 +65,7 @@ async function runDigestSend(request: NextRequest) {
   }
 
   const emails: DigestEmail[] = [];
-  const sentUserIds: string[] = [];
+  const userIdByEmail = new Map<DigestEmail, string>();
 
   for (const prefs of eligibleUsers) {
     const filter = filterByUser.get(prefs.user_id);
@@ -95,15 +95,19 @@ async function runDigestSend(request: NextRequest) {
     const lines = postings.map(
       (p) => `${companyDisplayName(p.company)} — ${p.title} (${p.location})\n${p.url}`
     );
-    emails.push({
+    const digestEmail: DigestEmail = {
       to: email,
       subject: `${postings.length} new posting${postings.length === 1 ? "" : "s"} matching your filter`,
       textBody: lines.join("\n\n"),
-    });
-    sentUserIds.push(prefs.user_id);
+    };
+    emails.push(digestEmail);
+    userIdByEmail.set(digestEmail, prefs.user_id);
   }
 
-  await sendDigestBatch(emails);
+  const sentEmails = await sendDigestBatch(emails);
+  const sentUserIds = sentEmails
+    .map((email) => userIdByEmail.get(email))
+    .filter((userId): userId is string => Boolean(userId));
 
   if (sentUserIds.length > 0) {
     await supabase
