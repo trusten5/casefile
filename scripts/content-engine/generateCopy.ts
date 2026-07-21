@@ -32,7 +32,7 @@ const POST_SCHEMA = {
           text: { type: "string", description: "The on-slide text for this slide, including slide 1's hook as the first item" },
           assetType: {
             type: "string",
-            enum: ["pinterest", "screenshots", "photos", "backgrounds"],
+            enum: ["pinterest", "photos", "backgrounds"],
             description: "Which local image category best fits this slide's background",
           },
         },

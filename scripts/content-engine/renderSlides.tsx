@@ -13,7 +13,7 @@ const MIME: Record<string, string> = { jpg: "image/jpeg", jpeg: "image/jpeg", pn
 // back to a plain color — that plain-color case is just a safety net for
 // an empty asset library (see the fallback branch in renderSlide below),
 // not something that should show up once the library is populated.
-const FALLBACK_ORDER: AssetType[] = ["photos", "screenshots", "backgrounds", "pinterest"];
+const FALLBACK_ORDER: AssetType[] = ["photos", "backgrounds", "pinterest"];
 
 function listImages(assetType: AssetType): string[] {
   const dir = join(ASSETS_DIR, assetType);

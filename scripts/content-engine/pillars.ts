@@ -3,7 +3,9 @@
 // copy must satisfy — see generateCopy.ts for how these get built into a
 // prompt.
 
-export type AssetType = "pinterest" | "screenshots" | "photos" | "backgrounds";
+// "screenshots" (real app screenshots) is deliberately excluded — every
+// slide should be a real photo, not an app UI shot.
+export type AssetType = "pinterest" | "photos" | "backgrounds";
 
 export interface Pillar {
   key: string;
