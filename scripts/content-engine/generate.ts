@@ -10,8 +10,16 @@ import { ACTIVE_PILLARS as PILLARS } from "./pillars";
 import { getContentStats } from "./stats";
 import { generateCopy, type Draft } from "./generateCopy";
 
+function localDateKey(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 async function main() {
-  const date = new Date().toISOString().slice(0, 10);
+  // Local date, not UTC — a UTC-based date would mismatch the shell
+  // wrapper's `date +%Y-%m-%d` (also local) for evening runs in timezones
+  // behind UTC, pointing render/email steps at a folder that doesn't exist.
+  const date = localDateKey(new Date());
   const batchDir = join(__dirname, "..", "..", "content", "output", date);
   const drafts: Draft[] = [];
   const reviewLines: string[] = [
