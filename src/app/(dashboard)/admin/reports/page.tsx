@@ -100,6 +100,12 @@ export default async function AdminReportsPage(props: PageProps<"/admin/reports"
       >
         Content draft →
       </Link>
+      <Link
+        href="/admin/feature-requests"
+        className="ml-2 inline-block rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink"
+      >
+        Feature requests →
+      </Link>
       <h1 className="mt-4 font-display text-2xl font-semibold text-ink">Reported links</h1>
       <p className="mt-1 text-sm text-ink-soft">
         Postings someone flagged as broken — still live in the feed until you confirm or dismiss.
