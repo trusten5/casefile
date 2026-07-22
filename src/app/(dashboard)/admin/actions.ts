@@ -33,3 +33,13 @@ export async function dismissReport(postingId: string) {
   revalidatePath("/admin/reports");
   redirect(`/admin/reports?flash=${encodeURIComponent("Report dismissed")}`);
 }
+
+export async function markFeatureRequestRead(id: string) {
+  await requireAdmin();
+  const supabase = getSupabase();
+  const { error } = await supabase.from("feature_requests").update({ is_read: true }).eq("id", id);
+  if (error) throw error;
+
+  revalidatePath("/admin/feature-requests");
+  redirect(`/admin/feature-requests?flash=${encodeURIComponent("Marked read")}`);
+}

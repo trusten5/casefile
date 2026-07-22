@@ -17,6 +17,7 @@ import {
   deleteSavedFilter,
   setDefaultFilter,
   updateDigestPreferences,
+  createFeatureRequest,
 } from "./actions";
 import { createCheckoutSession, createPortalSession } from "@/app/pricing/actions";
 import { OptionalField } from "./OptionalField";
@@ -424,6 +425,29 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
         suggestions={SUGGESTED_APPLICATION_PRESETS}
         showLocationKeyword={false}
       />
+
+      <section className="mt-10">
+        <h2 className="font-display text-lg font-semibold text-ink">Feature requests</h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          Missing something? Tell us what would make Casefile more useful.
+        </p>
+        <form action={createFeatureRequest} className="mt-4 flex flex-col gap-3">
+          <textarea
+            name="body"
+            required
+            maxLength={2000}
+            rows={4}
+            placeholder="What would help your internship search?"
+            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          />
+          <button
+            type="submit"
+            className="self-start rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper"
+          >
+            Submit
+          </button>
+        </form>
+      </section>
     </div>
   );
 }

@@ -144,3 +144,17 @@ export async function updateDigestPreferences(formData: FormData) {
   revalidatePath("/profile");
   redirect(`/profile?flash=${encodeURIComponent(digestEnabled ? "Digest enabled" : "Digest updated")}`);
 }
+
+export async function createFeatureRequest(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Not signed in");
+  const supabase = getSupabase();
+
+  const body = String(formData.get("body") ?? "").trim();
+  if (!body) throw new Error("Feature request can't be empty");
+
+  const { error } = await supabase.from("feature_requests").insert({ user_id: userId, body });
+  if (error) throw error;
+
+  redirect(`/profile?flash=${encodeURIComponent("Thanks — we'll take a look")}`);
+}
