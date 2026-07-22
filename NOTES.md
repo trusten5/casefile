@@ -6,4 +6,3 @@ context). When you're ready, say "turn my notes into issues" and they'll
 become GitHub issues (small stuff labeled `quick-fix`, bigger stuff
 labeled `enhancement`), and this file gets cleared back out.
 
--
