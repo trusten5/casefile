@@ -28,7 +28,7 @@ const PLANS = [
     tier: "plus" as const,
     name: "Plus",
     price: "$1.99/mo",
-    annualPrice: "$19/yr",
+    annualPrice: "$19.99/yr",
     monthlyPriceId: process.env.STRIPE_PRICE_PLUS_MONTHLY!,
     annualPriceId: process.env.STRIPE_PRICE_PLUS_ANNUAL!,
     blurb: "Get emailed when new postings match your saved feed filter.",
