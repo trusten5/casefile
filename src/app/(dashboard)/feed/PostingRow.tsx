@@ -42,7 +42,7 @@ export function PostingRow({
   const roleType = posting.role_type;
 
   return (
-    <li className="flex flex-wrap items-start justify-between gap-4 py-4">
+    <li className="flex flex-col items-start gap-3 py-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-4">
       <div className="flex min-w-0 flex-1 items-start gap-3">
         {slug ? (
           <Link href={`/companies/${slug}`} className="shrink-0">
@@ -77,7 +77,7 @@ export function PostingRow({
           </p>
         </div>
       </div>
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3 sm:shrink-0">
         <SavePostingToggle initialSaved={isSaved} onSave={save} onUnsave={unsave} />
         <ApplyControl
           url={posting.url}

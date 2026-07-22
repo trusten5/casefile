@@ -28,10 +28,10 @@ const DESCRIPTION =
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: "Casefile — Applied. Ghosted. Repeat.",
+  title: "Casefile — Applied. Tracked. Repeat.",
   description: DESCRIPTION,
   openGraph: {
-    title: "Casefile — Applied. Ghosted. Repeat.",
+    title: "Casefile — Applied. Tracked. Repeat.",
     description: DESCRIPTION,
     siteName: "Casefile",
     type: "website",
