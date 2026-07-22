@@ -30,7 +30,7 @@ export default function OgImage() {
             lineHeight: 1.1,
           }}
         >
-          Applied. Repeat.
+          Applied. Tracked. Repeat.
         </div>
         <div style={{ marginTop: 28, fontSize: 30, color: "#55584f", maxWidth: 900 }}>
           One case file for every application, every contact, every lead.
