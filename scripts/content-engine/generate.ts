@@ -11,6 +11,7 @@ import { getContentStats } from "./stats";
 import { generateCopy, type Draft } from "./generateCopy";
 import { pickAssetPath } from "./renderSlides";
 import { recentHooks, recordHook } from "./history";
+import { getCuratedFeed } from "./curatedFeed";
 import { getSupabase } from "../../src/lib/supabase";
 
 function localDateKey(d: Date): string {
@@ -81,6 +82,14 @@ async function main() {
       ""
     );
     console.log(`[${label}] done — ${post.slides.length} slides`);
+  }
+
+  try {
+    const feed = await getCuratedFeed();
+    reviewLines.push("## Today's finds (not auto-posted — yours to look into)", feed, "");
+  } catch (err) {
+    console.error("Curated feed fetch failed, skipping:", err);
+    reviewLines.push("## Today's finds — SKIPPED (fetch failed)\n");
   }
 
   mkdirSync(batchDir, { recursive: true });
