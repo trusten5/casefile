@@ -61,7 +61,14 @@ async function main() {
     // at draft time — that's what makes it visible and editable in
     // draft.json instead of being re-picked randomly when render.ts runs.
     post.slides = post.slides.map((s) => ({ ...s, photo: pickAssetPath(s.assetType) }));
-    recordHook(pillar.key, post.hook);
+    // Store the hook plus a gist of every tactic slide, not just the hook —
+    // otherwise the model reliably reworded the same headline while
+    // reusing the same small pool of tactics underneath.
+    const tacticGist = post.slides
+      .slice(1, -1)
+      .map((s) => s.text.split(/[.:]/)[0])
+      .join(" | ");
+    recordHook(pillar.key, tacticGist ? `${post.hook} :: ${tacticGist}` : post.hook);
 
     drafts.push({ label, pillarTitle: pillar.title, post });
     reviewLines.push(

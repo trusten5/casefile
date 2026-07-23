@@ -61,7 +61,7 @@ export async function generateCopy(
     : "";
 
   const historyBlock = recentHooks.length
-    ? `\n\nHOOKS ALREADY USED FOR THIS PILLAR RECENTLY — do not reuse any of these, or anything that's just a light reword of one of them. Come at this from a genuinely different angle:\n${recentHooks.map((h) => `- ${h}`).join("\n")}`
+    ? `\n\nRECENT POSTS FOR THIS PILLAR (hook :: tactics covered) — do not reuse any of these hooks, or the underlying tactics, even under a reworded headline. Come at this from a genuinely different angle:\n${recentHooks.map((h) => `- ${h}`).join("\n")}`
     : "";
 
   const system = `You write slideshow scripts for a faceless TikTok account promoting a job-search tracking app, aimed at students/new grads applying to internships and jobs. Voice: direct, a little wry, zero corporate tone, no emoji spam, no hype language ("game-changer", "you won't believe").
