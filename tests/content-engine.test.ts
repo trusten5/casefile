@@ -41,7 +41,7 @@ describe("renderSlide", () => {
 });
 
 describe("getCuratedFeed", () => {
-  it("returns 5 lines of real text with links, sourced live", async () => {
+  it("returns non-empty text containing a link, sourced live", async () => {
     const feed = await getCuratedFeed();
 
     expect(typeof feed).toBe("string");
