@@ -8,6 +8,7 @@ try {
 import { describe, expect, it } from "vitest";
 import { getContentStats } from "../scripts/content-engine/stats";
 import { renderSlide } from "../scripts/content-engine/renderSlides";
+import { getCuratedFeed } from "../scripts/content-engine/curatedFeed";
 
 const PNG_MAGIC = [0x89, 0x50, 0x4e, 0x47];
 
@@ -37,4 +38,14 @@ describe("renderSlide", () => {
     const bytes = new Uint8Array(png).slice(0, 4);
     expect(Array.from(bytes)).toEqual(PNG_MAGIC);
   });
+});
+
+describe("getCuratedFeed", () => {
+  it("returns 5 lines of real text with links, sourced live", async () => {
+    const feed = await getCuratedFeed();
+
+    expect(typeof feed).toBe("string");
+    expect(feed.length).toBeGreaterThan(0);
+    expect(feed).toMatch(/https?:\/\//);
+  }, 45000);
 });
