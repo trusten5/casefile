@@ -7,6 +7,7 @@ import { getUserPreferences } from "@/lib/preferences";
 import { computeStreak, localDateKey } from "@/lib/streak";
 import { Flash } from "@/components/Flash";
 import { PostingRow } from "../feed/PostingRow";
+import { StreakTile } from "./StreakTile";
 
 function startOfTodayISO() {
   const date = new Date();
@@ -109,15 +110,12 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
       <p className="mt-1 text-sm text-ink-soft">Your daily home base for the hunt.</p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
-          <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Streak</p>
-          <p className="font-display text-xl font-semibold text-ink">
-            {streak} day{streak === 1 ? "" : "s"}
-          </p>
-          <p className="mt-1 text-xs text-ink-soft">
-            Today: {todayResult.count ?? 0} / {preferences.dailyGoal} applied
-          </p>
-        </div>
+        <StreakTile
+          streak={streak}
+          todayCount={todayResult.count ?? 0}
+          dailyGoal={preferences.dailyGoal}
+          countsByDay={countsByDay}
+        />
         <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Total applications</p>
           <p className="font-display text-xl font-semibold text-ink">{totalApplications}</p>
