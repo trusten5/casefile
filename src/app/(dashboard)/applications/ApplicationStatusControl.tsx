@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { STATUSES, getSkippedStages } from "@/lib/applications";
 import { updateApplicationStatus, deleteApplication } from "./actions";
 
 const STATUS_LABEL: Record<string, string> = Object.fromEntries(STATUSES.map((s) => [s.value, s.label]));
+
+// How long "Removed. Undo" stays up before the delete actually commits.
+const UNDO_MS = 5000;
 
 type PendingChange = { next: string; checked: Set<string> };
 
@@ -16,9 +19,10 @@ export function ApplicationStatusControl({
   initialStatus: string;
 }) {
   const [status, setStatus] = useState(initialStatus);
-  const [removed, setRemoved] = useState(false);
+  const [pendingRemove, setPendingRemove] = useState(false);
   const [pending, setPending] = useState<PendingChange | null>(null);
   const [isPending, startTransition] = useTransition();
+  const removeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   function onStatusChange(next: string) {
     const skipped = getSkippedStages(status, next);
@@ -49,14 +53,29 @@ export function ApplicationStatusControl({
   }
 
   function onRemove() {
-    if (!window.confirm("Remove this application? This can't be undone.")) return;
-    setRemoved(true);
-    startTransition(() => {
-      deleteApplication(applicationId).catch(() => setRemoved(false));
-    });
+    setPendingRemove(true);
+    removeTimer.current = setTimeout(() => {
+      startTransition(() => {
+        deleteApplication(applicationId).catch(() => setPendingRemove(false));
+      });
+    }, UNDO_MS);
   }
 
-  if (removed) return null;
+  function onUndoRemove() {
+    clearTimeout(removeTimer.current);
+    setPendingRemove(false);
+  }
+
+  if (pendingRemove) {
+    return (
+      <div className="flex shrink-0 items-center gap-2 text-sm text-ink-soft">
+        Removed.
+        <button type="button" onClick={onUndoRemove} className="font-medium text-ink underline">
+          Undo
+        </button>
+      </div>
+    );
+  }
 
   const skipped = pending ? getSkippedStages(status, pending.next) : [];
 
