@@ -24,25 +24,17 @@ export default async function CompanyDetailPage(props: PageProps<"/companies/[sl
     .single();
   if (companyError || !company) notFound();
 
-  const { data: postings, error: postingsError } = await supabase
-    .from("postings")
-    .select("id, title, location, role_type, url, posted_at")
-    .eq("company_id", company.id)
-    .eq("is_active", true)
-    .order("posted_at", { ascending: false });
-
-  const [{ data: saved }, { data: applied }, { data: savedCompany }, { data: contacts }] =
+  // None of these four depend on each other — only on company.id/userId,
+  // both already known — so they run as one batch instead of postings then
+  // a separate batch afterward.
+  const [{ data: postings, error: postingsError }, { data: savedCompany }, { data: contacts }, tier] =
     await Promise.all([
-      userId
-        ? supabase.from("saved_postings").select("posting_id").eq("user_id", userId)
-        : Promise.resolve({ data: [] }),
-      userId
-        ? supabase
-            .from("applications")
-            .select("posting_id")
-            .eq("user_id", userId)
-            .not("posting_id", "is", null)
-        : Promise.resolve({ data: [] }),
+      supabase
+        .from("postings")
+        .select("id, title, location, role_type, url, posted_at")
+        .eq("company_id", company.id)
+        .eq("is_active", true)
+        .order("posted_at", { ascending: false }),
       userId
         ? supabase
             .from("saved_companies")
@@ -59,11 +51,33 @@ export default async function CompanyDetailPage(props: PageProps<"/companies/[sl
             .eq("user_id", userId)
             .order("name")
         : Promise.resolve({ data: [] as { id: string; name: string; role: string | null }[] }),
+      userId ? getUserTier(supabase, userId) : Promise.resolve("free" as const),
     ]);
+
+  const postingIds = (postings ?? []).map((p) => p.id);
+  // Scoped to just this company's posting ids, not the user's whole
+  // saved/applied history — this used to fetch every saved/applied
+  // posting_id a user has ever had just to check membership here.
+  const [{ data: saved }, { data: applied }] =
+    userId && postingIds.length > 0
+      ? await Promise.all([
+          supabase
+            .from("saved_postings")
+            .select("posting_id")
+            .eq("user_id", userId)
+            .in("posting_id", postingIds),
+          supabase
+            .from("applications")
+            .select("posting_id")
+            .eq("user_id", userId)
+            .not("posting_id", "is", null)
+            .in("posting_id", postingIds),
+        ])
+      : [{ data: [] as { posting_id: string }[] }, { data: [] as { posting_id: string | null }[] }];
+
   const savedIds = new Set((saved ?? []).map((row) => row.posting_id));
   const appliedIds = new Set((applied ?? []).map((row) => row.posting_id));
   const isCompanySaved = Boolean(savedCompany);
-  const tier = userId ? await getUserTier(supabase, userId) : "free";
 
   const rows = postings ?? [];
   const firstSeen = rows.reduce<string | null>(

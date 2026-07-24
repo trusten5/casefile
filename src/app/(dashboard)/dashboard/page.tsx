@@ -36,54 +36,59 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
   const searchParams = await props.searchParams;
   const flash = typeof searchParams.flash === "string" ? searchParams.flash : undefined;
 
-  const [
-    counts,
-    preferences,
-    todayResult,
-    streakResult,
-    postingsResult,
-    savedResult,
-    savedCountResult,
-    appliedResult,
-    followUpsResult,
-  ] = await Promise.all([
-    getFunnelCounts(supabase, userId),
-    getUserPreferences(supabase, userId),
-    supabase
-      .from("applications")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .gte("applied_at", startOfTodayISO()),
-    supabase
-      .from("applications")
-      .select("applied_at")
-      .eq("user_id", userId)
-      .gte("applied_at", startOfDaysAgoISO(STREAK_LOOKBACK_DAYS)),
-    supabase
-      .from("postings")
-      .select("id, title, location, role_type, url, posted_at, company:companies(name, logo_url, slug)")
-      .eq("is_active", true)
-      .order("posted_at", { ascending: false })
-      .limit(5),
-    supabase.from("saved_postings").select("posting_id").eq("user_id", userId),
-    supabase
-      .from("saved_postings")
-      .select("posting_id", { count: "exact", head: true })
-      .eq("user_id", userId),
-    supabase
-      .from("applications")
-      .select("posting_id")
-      .eq("user_id", userId)
-      .not("posting_id", "is", null),
-    supabase
-      .from("interactions")
-      .select("id, type, follow_up_date, contact:contacts!inner(id, name, user_id)")
-      .eq("contact.user_id", userId)
-      .not("follow_up_date", "is", null)
-      .gte("follow_up_date", startOfTodayISO().slice(0, 10))
-      .order("follow_up_date", { ascending: true })
-      .limit(5),
-  ]);
+  const [counts, preferences, todayResult, streakResult, postingsResult, savedCountResult, followUpsResult] =
+    await Promise.all([
+      getFunnelCounts(supabase, userId),
+      getUserPreferences(supabase, userId),
+      supabase
+        .from("applications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .gte("applied_at", startOfTodayISO()),
+      supabase
+        .from("applications")
+        .select("applied_at")
+        .eq("user_id", userId)
+        .gte("applied_at", startOfDaysAgoISO(STREAK_LOOKBACK_DAYS)),
+      supabase
+        .from("postings")
+        .select("id, title, location, role_type, url, posted_at, company:companies(name, logo_url, slug)")
+        .eq("is_active", true)
+        .order("posted_at", { ascending: false })
+        .limit(5),
+      supabase
+        .from("saved_postings")
+        .select("posting_id", { count: "exact", head: true })
+        .eq("user_id", userId),
+      supabase
+        .from("interactions")
+        .select("id, type, follow_up_date, contact:contacts!inner(id, name, user_id)")
+        .eq("contact.user_id", userId)
+        .not("follow_up_date", "is", null)
+        .gte("follow_up_date", startOfTodayISO().slice(0, 10))
+        .order("follow_up_date", { ascending: true })
+        .limit(5),
+    ]);
+
+  const latestPostingIds = (postingsResult.data ?? []).map((p) => p.id);
+  // Scoped to just the 5 ids shown here, not the user's whole saved/applied
+  // history — this used to fetch every saved/applied posting_id a user has
+  // ever had just to check membership of these 5.
+  const [savedResult, appliedResult] =
+    latestPostingIds.length > 0
+      ? await Promise.all([
+          supabase
+            .from("saved_postings")
+            .select("posting_id")
+            .eq("user_id", userId)
+            .in("posting_id", latestPostingIds),
+          supabase
+            .from("applications")
+            .select("posting_id")
+            .eq("user_id", userId)
+            .in("posting_id", latestPostingIds),
+        ])
+      : [{ data: [] as { posting_id: string }[] }, { data: [] as { posting_id: string | null }[] }];
 
   const savedIds = new Set((savedResult.data ?? []).map((row) => row.posting_id));
   const appliedIds = new Set((appliedResult.data ?? []).map((row) => row.posting_id));

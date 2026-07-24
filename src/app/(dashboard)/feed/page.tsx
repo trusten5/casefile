@@ -85,19 +85,26 @@ export default async function FeedPage(props: PageProps<"/feed">) {
   );
 
   const { data: postings, error } = await query;
+  const postingIds = (postings ?? []).map((p) => p.id);
 
-  const [{ data: saved }, { data: applied }] = await Promise.all([
-    userId
-      ? supabase.from("saved_postings").select("posting_id").eq("user_id", userId)
-      : Promise.resolve({ data: [] }),
-    userId
-      ? supabase
-          .from("applications")
-          .select("posting_id")
-          .eq("user_id", userId)
-          .not("posting_id", "is", null)
-      : Promise.resolve({ data: [] }),
-  ]);
+  // Scoped to just the ids on this page, not the user's whole saved/applied
+  // history — this used to fetch every saved/applied posting_id a user has
+  // ever had just to check membership of the ~60 rows shown here.
+  const [{ data: saved }, { data: applied }] =
+    userId && postingIds.length > 0
+      ? await Promise.all([
+          supabase
+            .from("saved_postings")
+            .select("posting_id")
+            .eq("user_id", userId)
+            .in("posting_id", postingIds),
+          supabase
+            .from("applications")
+            .select("posting_id")
+            .eq("user_id", userId)
+            .in("posting_id", postingIds),
+        ])
+      : [{ data: [] as { posting_id: string }[] }, { data: [] as { posting_id: string | null }[] }];
   const savedIds = new Set((saved ?? []).map((row) => row.posting_id));
   const appliedIds = new Set((applied ?? []).map((row) => row.posting_id));
 
