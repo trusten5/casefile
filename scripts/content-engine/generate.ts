@@ -77,9 +77,10 @@ async function main() {
     console.log(`[${label}] done — ${post.slides.length} slides`);
   }
 
+  let curatedFeed: string | null = null;
   try {
-    const feed = await getCuratedFeed();
-    reviewLines.push("## Today's finds (not auto-posted — yours to look into)", feed, "");
+    curatedFeed = await getCuratedFeed();
+    reviewLines.push("## Today's finds (not auto-posted — yours to look into)", curatedFeed, "");
   } catch (err) {
     console.error("Curated feed fetch failed, skipping:", err);
     reviewLines.push("## Today's finds — SKIPPED (fetch failed)\n");
@@ -95,7 +96,7 @@ async function main() {
   try {
     await getSupabase()
       .from("content_drafts")
-      .upsert({ batch_date: date, drafts, edited: false, updated_at: new Date().toISOString() });
+      .upsert({ batch_date: date, drafts, curated_feed: curatedFeed, edited: false, updated_at: new Date().toISOString() });
   } catch (err) {
     console.error("Failed to mirror draft to Supabase (non-fatal):", err);
   }

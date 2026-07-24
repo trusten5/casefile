@@ -18,7 +18,7 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
   const supabase = getSupabase();
   const { data: row } = await supabase
     .from("content_drafts")
-    .select("batch_date, drafts, edited")
+    .select("batch_date, drafts, edited, curated_feed")
     .order("batch_date", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -38,6 +38,16 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
             }`
           : "No draft yet — check back after the 8am generation step."}
       </p>
+
+      {row?.curated_feed && (
+        <div className="mt-6 rounded-md border border-paper-line p-4">
+          <h2 className="font-display text-lg text-ink">Today&apos;s finds</h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            Not auto-posted — source material for you to look into, headlines/links only.
+          </p>
+          <pre className="mt-3 whitespace-pre-wrap font-mono text-xs text-ink">{row.curated_feed}</pre>
+        </div>
+      )}
 
       {row && (
         <form action={saveContentDraft.bind(null, row.batch_date)} className="mt-8 space-y-8">
