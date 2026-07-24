@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
 import { CompanyDirectory } from "./CompanyDirectory";
+import { CompanyCard } from "./CompanyCard";
 import { TopCompanies } from "./TopCompanies";
 
 // No per-request Next API is used here (no auth()/searchParams), so Next
@@ -156,6 +157,21 @@ export default async function CompaniesPage(props: PageProps<"/companies">) {
       )}
 
       <TopCompanies companies={companies} chartWindow={chartWindow} chartType={chartType} />
+
+      <h2 className="mt-12 font-display text-lg font-semibold text-ink">Saved companies</h2>
+      {companies.some((c) => c.isSaved) ? (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {companies
+            .filter((c) => c.isSaved)
+            .map((c) => (
+              <CompanyCard key={c.id} company={c} />
+            ))}
+        </div>
+      ) : (
+        <p className="mt-4 text-sm text-ink-soft">
+          Nothing saved yet — hit Save on a company below or in the feed.
+        </p>
+      )}
 
       <h2 className="mt-12 font-display text-lg font-semibold text-ink">All companies</h2>
       <CompanyDirectory companies={companies} />
