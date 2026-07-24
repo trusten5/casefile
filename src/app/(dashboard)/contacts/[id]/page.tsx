@@ -26,7 +26,7 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
 
   const { data: contact, error: contactError } = await supabase
     .from("contacts")
-    .select("id, name, role, how_met, linkedin_url, company:companies(name, slug)")
+    .select("id, name, role, how_met, linkedin_url, company:companies(name, slug), company_name_input")
     .eq("id", id)
     .eq("user_id", userId ?? "")
     .single();
@@ -39,7 +39,7 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
     .order("occurred_at", { ascending: false });
 
   const slug = companySlug(contact.company);
-  const companyName = slug ? companyDisplayName(contact.company) : null;
+  const companyName = slug ? companyDisplayName(contact.company) : contact.company_name_input;
   const logForContact = logInteraction.bind(null, contact.id, `/contacts/${contact.id}`);
 
   return (

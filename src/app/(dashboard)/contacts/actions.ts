@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
-import { findOrCreateCompany } from "@/lib/companies";
+import { findCompanyId } from "@/lib/companies";
 
 export async function createContact(formData: FormData) {
   const { userId } = await auth();
@@ -20,7 +20,7 @@ export async function createContact(formData: FormData) {
   const linkedinUrl = String(formData.get("linkedinUrl") ?? "").trim();
   if (!name) throw new Error("Name is required");
 
-  const companyId = companyName ? await findOrCreateCompany(supabase, { name: companyName }) : null;
+  const companyId = companyName ? await findCompanyId(supabase, companyName) : undefined;
 
   // Verify the referrer is actually one of this user's own contacts before
   // linking to it — the id comes from a <select>, but never trust a client
@@ -39,7 +39,10 @@ export async function createContact(formData: FormData) {
   const { error } = await supabase.from("contacts").insert({
     user_id: userId,
     name,
-    company_id: companyId,
+    company_id: companyId ?? null,
+    // Only kept when the typed name didn't match a tracked company — once
+    // company_id resolves, companies.name is the source of truth.
+    company_name_input: companyId ? null : companyName || null,
     role: role || null,
     how_met: howMet || null,
     how_met_category: howMetCategory,
