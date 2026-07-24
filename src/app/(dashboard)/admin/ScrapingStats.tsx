@@ -8,13 +8,11 @@ const SOURCE_COLORS: Record<string, string> = {
   greenhouse: "#a9631f",
   lever: "#1d6fa5",
   ashby: "#9a3e6b",
-  "community:vanshb03": "#3f7d4a",
 };
 const SOURCE_LABELS: Record<string, string> = {
   greenhouse: "Greenhouse",
   lever: "Lever",
   ashby: "Ashby",
-  "community:vanshb03": "Community feed",
 };
 
 export type SourceStat = { source: string; active_postings: number; companies: number };
@@ -24,7 +22,6 @@ export type SyncRun = {
   finished_at: string | null;
   companies_ok: number | null;
   companies_failed: number | null;
-  community_synced: number | null;
   link_checked: number | null;
   link_dead: number | null;
   error: string | null;
@@ -191,7 +188,6 @@ export function ScrapingStats({
                   <th className="px-3 py-2">Started</th>
                   <th className="px-3 py-2">Duration</th>
                   <th className="px-3 py-2">Companies</th>
-                  <th className="px-3 py-2">Community</th>
                   <th className="px-3 py-2">Links checked</th>
                   <th className="px-3 py-2">Status</th>
                 </tr>
@@ -204,9 +200,6 @@ export function ScrapingStats({
                     <td className="px-3 py-2 font-mono text-xs text-ink-soft">
                       {run.companies_ok ?? "—"}
                       {Boolean(run.companies_failed) && ` (${run.companies_failed} failed)`}
-                    </td>
-                    <td className="px-3 py-2 font-mono text-xs text-ink-soft">
-                      {run.community_synced ?? "—"}
                     </td>
                     <td className="px-3 py-2 font-mono text-xs text-ink-soft">
                       {run.link_checked ?? "—"}

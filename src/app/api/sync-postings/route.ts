@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { syncAllPostings } from "@/lib/scrapers/sync";
-import { syncCommunityListings } from "@/lib/scrapers/community";
 import { checkStaleLinks } from "@/lib/scrapers/linkcheck";
 import { getSupabase } from "@/lib/supabase";
 import { isValidCronRequest } from "@/lib/cronAuth";
@@ -31,9 +30,8 @@ async function runSync(request: NextRequest) {
     .single();
   if (insertError) throw insertError;
 
-  const [results, community, linkHealth] = await Promise.all([
+  const [results, linkHealth] = await Promise.all([
     syncAllPostings().catch((err) => [{ error: err.message }]),
-    syncCommunityListings().catch((err) => ({ source: "community:vanshb03", error: err.message })),
     checkStaleLinks().catch((err) => ({ error: err.message })),
   ]);
 
@@ -43,13 +41,12 @@ async function runSync(request: NextRequest) {
       finished_at: new Date().toISOString(),
       companies_ok: results.filter((r) => !("error" in r)).length,
       companies_failed: results.filter((r) => "error" in r).length,
-      community_synced: "synced" in community ? community.synced : null,
       link_checked: "checked" in linkHealth ? linkHealth.checked : null,
       link_dead: "dead" in linkHealth ? linkHealth.dead : null,
     })
     .eq("id", runRow.id);
 
-  return NextResponse.json({ results, community, linkHealth });
+  return NextResponse.json({ results, linkHealth });
 }
 
 export const GET = runSync;

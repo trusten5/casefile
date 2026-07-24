@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       supabase
         .from("sync_runs")
         .select(
-          "started_at, finished_at, companies_ok, companies_failed, community_synced, link_checked, link_dead, error"
+          "started_at, finished_at, companies_ok, companies_failed, link_checked, link_dead, error"
         )
         .order("started_at", { ascending: false })
         .limit(1)
