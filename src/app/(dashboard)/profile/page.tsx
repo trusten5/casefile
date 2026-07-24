@@ -14,13 +14,12 @@ import { ROLE_TYPE_LABELS } from "@/lib/roleType";
 import {
   updatePreferences,
   createSavedFilter,
-  setDefaultFilter,
   updateDigestPreferences,
   createFeatureRequest,
 } from "./actions";
 import { createCheckoutSession, createPortalSession } from "@/app/pricing/actions";
 import { OptionalField } from "./OptionalField";
-import { DeleteFilterButton } from "./DeleteFilterButton";
+import { SavedFilterRow } from "./SavedFilterRow";
 
 export const dynamic = "force-dynamic";
 
@@ -91,30 +90,14 @@ function FilterScopeSection({
       ) : (
         <ul className="mt-4 divide-y divide-paper-line">
           {filters.map((f) => (
-            <li key={f.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-              <div className="min-w-0">
-                <p className="truncate font-medium text-ink">
-                  {f.name}
-                  {f.is_default && (
-                    <span className="ml-2 rounded-full bg-status-offer/15 px-2 py-0.5 font-mono text-[11px] font-medium text-status-offer">
-                      Default
-                    </span>
-                  )}
-                </p>
-                <p className="truncate text-xs text-ink-soft">{summarize(f)}</p>
-              </div>
-              <div className="flex shrink-0 items-center gap-2">
-                <form action={setDefaultFilter.bind(null, f.id, scope, !f.is_default)}>
-                  <button
-                    type="submit"
-                    className="rounded-md border border-paper-line px-3 py-1.5 text-xs text-ink"
-                  >
-                    {f.is_default ? "Unset default" : "Set as default"}
-                  </button>
-                </form>
-                <DeleteFilterButton filterId={f.id} />
-              </div>
-            </li>
+            <SavedFilterRow
+              key={f.id}
+              filterId={f.id}
+              scope={scope}
+              name={f.name}
+              summary={summarize(f)}
+              isDefault={f.is_default}
+            />
           ))}
         </ul>
       )}
