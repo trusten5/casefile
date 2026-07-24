@@ -14,13 +14,13 @@ import { ROLE_TYPE_LABELS } from "@/lib/roleType";
 import {
   updatePreferences,
   createSavedFilter,
-  deleteSavedFilter,
   setDefaultFilter,
   updateDigestPreferences,
   createFeatureRequest,
 } from "./actions";
 import { createCheckoutSession, createPortalSession } from "@/app/pricing/actions";
 import { OptionalField } from "./OptionalField";
+import { DeleteFilterButton } from "./DeleteFilterButton";
 
 export const dynamic = "force-dynamic";
 
@@ -112,11 +112,7 @@ function FilterScopeSection({
                     {f.is_default ? "Unset default" : "Set as default"}
                   </button>
                 </form>
-                <form action={deleteSavedFilter.bind(null, f.id)}>
-                  <button type="submit" className="text-xs text-ink-soft hover:text-status-rejected">
-                    Remove
-                  </button>
-                </form>
+                <DeleteFilterButton filterId={f.id} />
               </div>
             </li>
           ))}
