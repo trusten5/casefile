@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import { isAdmin } from "@/lib/admin";
@@ -18,6 +18,10 @@ export async function confirmBroken(postingId: string) {
   revalidatePath("/admin/reports");
   revalidatePath("/feed");
   revalidatePath("/dashboard");
+  // /companies caches its per-company posting counts under this tag (see
+  // companies/page.tsx) — without this, a listing marked broken here stays
+  // counted as active there until the 1hr fallback revalidate.
+  revalidateTag("postings", "max");
   redirect(`/admin/reports?flash=${encodeURIComponent("Marked broken and hidden from the feed")}`);
 }
 
