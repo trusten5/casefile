@@ -72,6 +72,11 @@ async function syncCompany(company: SeedCompany) {
 // Sequential (one request at a time) would take many minutes at this
 // company count — a small worker pool keeps it to roughly (n / concurrency)
 // request round-trips instead of n.
+// ponytail: bumped 8->16 alongside the company list crossing 200 to hold
+// wall-clock roughly flat against the 60s function cap — each target is a
+// different host (its own ATS's API), so raising this doesn't concentrate
+// load on any one of them. Bump again (or split into two cron-triggered
+// batches) if the company list keeps growing and runs start timing out.
 export async function syncAllPostings() {
-  return pool(SEED_COMPANIES, 8, syncCompany);
+  return pool(SEED_COMPANIES, 16, syncCompany);
 }
