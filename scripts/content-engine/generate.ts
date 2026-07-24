@@ -1,16 +1,16 @@
-// Generates the copy-only draft for a batch (tactical advice, networking
-// tactics, CTA) — no images yet. Review content/output/<date>/review.md,
+// Generates the copy-only draft for a batch (2 anchor pillars plus one
+// rotated pillar, see pillars.ts) — no images yet. Review content/output/<date>/review.md,
 // edit content/output/<date>/draft.json directly if you want to change any
 // wording, then run render.ts on the same date to produce the slide images.
 //
 // Run with: npx tsx scripts/content-engine/generate.ts
 import { mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
-import { ACTIVE_PILLARS as PILLARS } from "./pillars";
+import { ANCHOR_PILLARS, SLOT3_POOL } from "./pillars";
 import { getContentStats } from "./stats";
 import { generateCopy, type Draft } from "./generateCopy";
 import { pickAssetPath } from "./renderSlides";
-import { recentHooks, recordHook } from "./history";
+import { recentHooks, recordHook, nextSlot3Pillar } from "./history";
 import { getCuratedFeed } from "./curatedFeed";
 import { getSupabase } from "../../src/lib/supabase";
 
@@ -33,8 +33,13 @@ async function main() {
     "",
   ];
 
-  for (let i = 0; i < PILLARS.length; i++) {
-    const pillar = PILLARS[i];
+  // 2 daily anchors, plus one pillar rotated from SLOT3_POOL (see history.ts)
+  // so the CTA and the new fun/positive pillars each get a turn instead of
+  // the same 3 pillars repeating every batch.
+  const pillars = [...ANCHOR_PILLARS, nextSlot3Pillar(SLOT3_POOL)];
+
+  for (let i = 0; i < pillars.length; i++) {
+    const pillar = pillars[i];
     const label = `${i + 1}-${pillar.key}`;
     console.log(`[${label}] generating copy...`);
 
@@ -61,12 +66,17 @@ async function main() {
     // Resolve each slide's category (assetType) to one specific filename now,
     // at draft time — that's what makes it visible and editable in
     // draft.json instead of being re-picked randomly when render.ts runs.
-    post.slides = post.slides.map((s) => ({ ...s, photo: pickAssetPath(s.assetType) }));
-    // Store the hook plus a gist of every tactic slide, not just the hook —
-    // otherwise the model reliably reworded the same headline while
-    // reusing the same small pool of tactics underneath.
+    // Tool-call schemas aren't strictly enforced by every provider (seen via
+    // OpenRouter), so a slide can come back without assetType — default it
+    // instead of crashing the whole batch over one loose field.
+    post.slides = post.slides.map((s) => ({ ...s, photo: pickAssetPath(s.assetType ?? "photos") }));
+    // Store the hook plus a gist of every other slide, including the
+    // closing slide — otherwise the model reliably reworded the hook while
+    // reusing the same small pool of tactics AND the same closing line
+    // ("saved you 20 min of guessing", "link in bio if you want it too")
+    // untouched, since the anti-repeat history never saw the last slide.
     const tacticGist = post.slides
-      .slice(1, -1)
+      .slice(1)
       .map((s) => s.text.split(/[.:]/)[0])
       .join(" | ");
     recordHook(pillar.key, tacticGist ? `${post.hook} :: ${tacticGist}` : post.hook);

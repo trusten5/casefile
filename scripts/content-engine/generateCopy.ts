@@ -1,5 +1,6 @@
 import type { Pillar, AssetType } from "./pillars";
 import type { ContentStats } from "./stats";
+import { callToolOnce } from "./llm";
 
 export interface GeneratedPost {
   hook: string;
@@ -18,8 +19,6 @@ export interface Draft {
   pillarTitle: string;
   post: GeneratedPost;
 }
-
-const MODEL = process.env.CONTENT_ENGINE_MODEL || "claude-sonnet-5";
 
 const POST_SCHEMA = {
   type: "object",
@@ -53,9 +52,6 @@ export async function generateCopy(
   stats: ContentStats | null,
   recentHooks: string[] = []
 ): Promise<GeneratedPost> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not set");
-
   const statsBlock = stats
     ? `\n\nREAL VERIFIED DATA (use only these numbers — never invent, round dramatically, or estimate beyond what's here):\n${JSON.stringify(stats, null, 2)}`
     : "";
@@ -69,35 +65,20 @@ export async function generateCopy(
 STYLE RULES — apply to every slide:
 - Terse: cut filler, qualifiers, and throat-clearing. Combine each slide's "what" and "why" into the tightest phrasing that still lands — hook slide under 14 words, every other slide under 20. If a word can be cut without losing meaning, cut it.
 - Accurate: never relabel a number's unit. If a stat counts postings, call it postings, not companies (and vice versa). Never round, restate, or paraphrase a real number differently than it's given.
-- Strong hooks: hyper-specific — a real number + a concrete action + a concrete stake. No generic openers ("here's the truth about...", "let's talk about..."). Front-load the single most surprising detail, don't build up to it.
-- Any "e.g." example in the brief below illustrates the PATTERN only — it's a real post from the past, not a template. Never reuse it verbatim or as a near-paraphrase; invent your own specific hook and tactics every time.
+- Strong hooks, any of these registers — pick whichever fits the pillar below, not the same one every time: a real number + concrete action + concrete stake; a curiosity gap (tease a surprising result without giving it away up front); a contrarian take ("everyone says X, here's why that's backwards"); dropping the viewer straight into a scene; a confession. No generic openers ("here's the truth about...", "let's talk about..."). Front-load the single most surprising detail, don't build up to it.
+- Tone mix: not every post needs a scarcity/anxiety angle — curiosity, humor, and encouragement are equally valid registers. Unless the pillar brief below is explicitly tactical advice, default to upbeat, funny, or surprising over anxious.
+- Never reuse these closing phrases or close near-paraphrases of them, no matter which pillar: "saved you N minutes of guessing", "link in bio if you want it too", "losing track of", "lost in the void", "before it's too late". Vary the close every time.
+- Pillars are topics and constraints, not outlines — the brief below tells you the subject and the rules, not the shape. Don't impose the same slide-by-slide structure on every post in a pillar (e.g. always hook → numbered list → "the mistake" → close). Invent a fresh structure each time: a story, a ranked list, one idea explored in depth, several quick hits, whatever fits this specific post — vary slide count, pacing, and where the payoff lands naturally with the content. The hook is still the one thing that must land hard every time; everything after it is free-form.
 
 ${pillar.brief}${statsBlock}${historyBlock}`;
 
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 2000,
-      system,
-      messages: [{ role: "user", content: `Write the ${pillar.title} post for today's batch.` }],
-      tools: [{ name: "emit_post", description: "Emit the finished slideshow post", input_schema: POST_SCHEMA }],
-      tool_choice: { type: "tool", name: "emit_post" },
-    }),
-  });
+  const input = await callToolOnce(
+    system,
+    `Write the ${pillar.title} post for today's batch.`,
+    "emit_post",
+    "Emit the finished slideshow post",
+    POST_SCHEMA
+  );
 
-  if (!response.ok) {
-    throw new Error(`Anthropic API error ${response.status}: ${await response.text()}`);
-  }
-
-  const body = await response.json();
-  const toolUse = body.content?.find((block: { type: string }) => block.type === "tool_use");
-  if (!toolUse) throw new Error("No tool_use block in Claude response");
-
-  return toolUse.input as GeneratedPost;
+  return input as GeneratedPost;
 }

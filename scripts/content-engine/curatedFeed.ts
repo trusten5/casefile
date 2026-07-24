@@ -13,7 +13,9 @@ Scope: job search, careers, college, tech, finance, interviews, corporate/busine
 
 Recency: only the last 24-48 hours.
 
-Tone: don't pick sides politically, but a bill passing or a politician announcing something that hits these topic areas is fair game. Controversy is fine as long as it's on-topic — don't chase controversy that's unrelated to these topics.
+Tone mix: actively prioritize funny, surprising, or good-news finds — a weird job posting, a corporate PR fail, a quirky workplace-culture story, a surprisingly positive hiring trend. Layoff/downsizing headlines are common and easy to find, but only include one if it has a genuinely novel or surprising angle beyond "company X cuts N jobs" — don't default to whatever doom headline is most recent. Aim for a real mix across the 5, not 5 variations on layoffs.
+
+Don't pick sides politically, but a bill passing or a politician announcing something that hits these topic areas is fair game. Controversy is fine as long as it's on-topic — don't chase controversy that's unrelated to these topics.
 
 Output format: respond with EXACTLY 5 lines, nothing else — no intro, no numbering explanation, no ranking rationale. Each line: <the headline or tweet text> — <URL>`;
 
