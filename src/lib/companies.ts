@@ -33,6 +33,21 @@ export async function findOrCreateCompany(
   return data.id as string;
 }
 
+// Contacts are free-typed and mostly aren't companies we scrape (a specific
+// recruiter's employer, a typo, a company with no tracked postings) — unlike
+// findOrCreateCompany, this never inserts, so a name with no match just
+// means "no linked company" instead of permanently adding a row to the
+// shared companies table/directory for every name anyone types.
+export async function findCompanyId(supabase: SupabaseClient, name: string) {
+  const { data, error } = await supabase
+    .from("companies")
+    .select("id")
+    .eq("slug", slugify(name))
+    .maybeSingle();
+  if (error) throw error;
+  return data?.id as string | undefined;
+}
+
 // Supabase returns embedded to-one relations as an object normally, but as an
 // array when the query can't prove uniqueness — callers just want one field.
 type CompanyRef =

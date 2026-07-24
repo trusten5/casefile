@@ -42,6 +42,7 @@ type ContactRow = {
   role: string | null;
   company_id: string | null;
   company: { name: string; slug: string } | { name: string; slug: string }[] | null;
+  company_name_input: string | null;
   interactions: InteractionRow[] | null;
   how_met_category: string;
   referred_by_contact_id: string | null;
@@ -59,7 +60,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
     ? await supabase
         .from("contacts")
         .select(
-          "id, name, role, company_id, company:companies(name, slug), interactions(id, occurred_at, follow_up_date), how_met_category, referred_by_contact_id"
+          "id, name, role, company_id, company:companies(name, slug), company_name_input, interactions(id, occurred_at, follow_up_date), how_met_category, referred_by_contact_id"
         )
         .eq("user_id", userId)
         .order("name")
@@ -107,7 +108,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
       name: c.name,
       role: c.role,
       companyId: c.company_id,
-      companyName: slug ? companyDisplayName(c.company) : null,
+      companyName: slug ? companyDisplayName(c.company) : c.company_name_input,
       nextFollowUp,
       nextAction,
       actionReason,
