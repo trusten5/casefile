@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { localDateKey } from "@/lib/streak";
 
 const WEEKDAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -81,6 +82,9 @@ export function StreakTile({
             </span>
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-sm bg-status-oa" /> Applied, under goal
+            </span>
+            <span>
+              * <Link href="/profile" className="underline hover:text-ink">set goal in profile</Link>
             </span>
           </div>
         </div>
