@@ -73,12 +73,17 @@ export default async function ApplicationsPage(props: PageProps<"/applications">
   const levelFilter =
     typeof searchParams.level === "string" ? searchParams.level : defaultPreset?.level ?? "";
 
+  // ponytail: hard cap, no "load more" UI yet — add pagination if a real
+  // user's history grows past this (a full recruiting cycle is usually
+  // well under it; this is a safety net against unbounded DOM growth, not
+  // a limit anyone should realistically hit today).
   let applicationsQuery = supabase
     .from("applications")
     .select(
       "id, role_title, status, applied_at, role_type, is_phd, company:companies!inner(name, logo_url, slug)"
     )
-    .order("applied_at", { ascending: false });
+    .order("applied_at", { ascending: false })
+    .limit(200);
   if (userId) applicationsQuery = applicationsQuery.eq("user_id", userId);
   if (companyFilter) applicationsQuery = applicationsQuery.ilike("company.name", `%${companyFilter}%`);
   if (roleTypeFilter) applicationsQuery = applicationsQuery.eq("role_type", roleTypeFilter);
