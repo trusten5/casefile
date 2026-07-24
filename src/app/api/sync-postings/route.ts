@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { syncAllPostings } from "@/lib/scrapers/sync";
 import { checkStaleLinks } from "@/lib/scrapers/linkcheck";
 import { getSupabase } from "@/lib/supabase";
@@ -45,6 +46,14 @@ async function runSync(request: NextRequest) {
       link_dead: "dead" in linkHealth ? linkHealth.dead : null,
     })
     .eq("id", runRow.id);
+
+  // Invalidates /companies' cached postings scan right away instead of
+  // leaving it to the 1hr fallback revalidate — so a sync landing new
+  // postings shows up on the next page load, not up to an hour later.
+  // "max" = stale-while-revalidate: this request's own page loads still get
+  // today's now-stale cache, but the *next* /companies visit after this
+  // returns triggers a fresh scan instead of waiting out the hour.
+  revalidateTag("postings", "max");
 
   return NextResponse.json({ results, linkHealth });
 }
