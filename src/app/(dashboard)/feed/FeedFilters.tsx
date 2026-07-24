@@ -19,8 +19,13 @@ const LEVELS = [
 
 const TEXT_DEBOUNCE_MS = 400;
 
-function buildFeedUrl(basePath: string, filters: Filters) {
-  const query = postingFiltersToQueryString(filters);
+// savedCompaniesOnly rides alongside the URL-serializable filters as its own
+// param instead of joining PostingFilters — it's a /feed-only concept (the
+// landing-page teaser and digest cron share that type and don't need it).
+function buildFeedUrl(basePath: string, filters: Filters, savedCompaniesOnly: boolean) {
+  const params = new URLSearchParams(postingFiltersToQueryString(filters));
+  if (savedCompaniesOnly) params.set("savedCompanies", "1");
+  const query = params.toString();
   return query ? `${basePath}?${query}` : basePath;
 }
 
@@ -32,6 +37,7 @@ export function FeedFilters({
   initialLocation,
   initialKeyword,
   initialLevel,
+  initialSavedCompaniesOnly = false,
   presets,
   savedCompanies = [],
   basePath = "/feed",
@@ -41,6 +47,7 @@ export function FeedFilters({
   initialLocation: string;
   initialKeyword: string;
   initialLevel: string;
+  initialSavedCompaniesOnly?: boolean;
   presets: FeedPreset[];
   savedCompanies?: string[];
   basePath?: string;
@@ -53,6 +60,7 @@ export function FeedFilters({
     keyword: initialKeyword,
     level: initialLevel,
   });
+  const [savedCompaniesOnly, setSavedCompaniesOnly] = useState(initialSavedCompaniesOnly);
   const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -62,24 +70,37 @@ export function FeedFilters({
 
   function selectSavedCompany(name: string) {
     setCompanyDropdownOpen(false);
-    applyImmediately({ company: name });
+    applyImmediately({ company: name }, false);
+  }
+
+  function selectAllSavedCompanies() {
+    setCompanyDropdownOpen(false);
+    applyImmediately({ company: "" }, true);
+  }
+
+  function clearSavedCompaniesOnly() {
+    applyImmediately({}, false);
   }
 
   // Selects apply immediately; free-text fields debounce so we're not
-  // re-fetching on every keystroke.
-  function applyImmediately(patch: Partial<Filters>) {
+  // re-fetching on every keystroke. `nextSavedOnly` defaults to clearing the
+  // saved-companies-only mode — typing/picking a specific company is always
+  // a switch away from it.
+  function applyImmediately(patch: Partial<Filters>, nextSavedOnly = false) {
     clearTimeout(debounceRef.current);
     const next = { ...filters, ...patch };
     setFilters(next);
-    router.replace(buildFeedUrl(basePath, next));
+    setSavedCompaniesOnly(nextSavedOnly);
+    router.replace(buildFeedUrl(basePath, next, nextSavedOnly));
   }
 
   function applyDebounced(patch: Partial<Filters>) {
     const next = { ...filters, ...patch };
     setFilters(next);
+    setSavedCompaniesOnly(false);
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(
-      () => router.replace(buildFeedUrl(basePath, next)),
+      () => router.replace(buildFeedUrl(basePath, next, false)),
       TEXT_DEBOUNCE_MS
     );
   }
@@ -88,6 +109,7 @@ export function FeedFilters({
     clearTimeout(debounceRef.current);
     const next = { company: "", roleType: "", location: "", keyword: "", level: "" };
     setFilters(next);
+    setSavedCompaniesOnly(false);
     router.replace(basePath);
   }
 
@@ -117,17 +139,39 @@ export function FeedFilters({
       )}
       <label className="relative flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
         Company
-        <input
-          value={filters.company}
-          onChange={(e) => applyDebounced({ company: e.target.value })}
-          onFocus={() => setCompanyDropdownOpen(true)}
-          onBlur={() => setTimeout(() => setCompanyDropdownOpen(false), 150)}
-          placeholder="Search companies…"
-          autoComplete="off"
-          className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
-        />
-        {companyDropdownOpen && matchingSavedCompanies.length > 0 && (
+        <div className="flex items-center gap-2">
+          <input
+            value={filters.company}
+            onChange={(e) => applyDebounced({ company: e.target.value })}
+            onFocus={() => setCompanyDropdownOpen(true)}
+            onBlur={() => setTimeout(() => setCompanyDropdownOpen(false), 150)}
+            placeholder={savedCompaniesOnly ? "All saved companies" : "Search companies…"}
+            autoComplete="off"
+            className="w-full rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          />
+          {savedCompaniesOnly && (
+            <button
+              type="button"
+              onClick={clearSavedCompaniesOnly}
+              className="shrink-0 text-ink-soft hover:text-ink"
+              title="Clear"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {companyDropdownOpen && savedCompanies.length > 0 && (
           <ul className="absolute left-0 top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-paper-line bg-paper py-1 shadow-sm">
+            <li>
+              <button
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={selectAllSavedCompanies}
+                className="block w-full px-3 py-1.5 text-left text-sm text-ink hover:bg-tab/20"
+              >
+                ★ All saved companies
+              </button>
+            </li>
             {matchingSavedCompanies.map((name) => (
               <li key={name}>
                 <button
