@@ -14,6 +14,17 @@ export function SaveCompanyButton({
   const [saved, setSaved] = useState(initialSaved);
   const [isPending, startTransition] = useTransition();
 
+  // The same company can render in two places at once (e.g. "Saved
+  // companies" and "All companies"). Toggling one revalidates the page and
+  // sends this instance a fresh initialSaved — resync during render (React's
+  // documented pattern for derived state) instead of a setState-in-effect,
+  // which would render once stale before catching up.
+  const [prevInitialSaved, setPrevInitialSaved] = useState(initialSaved);
+  if (initialSaved !== prevInitialSaved) {
+    setPrevInitialSaved(initialSaved);
+    setSaved(initialSaved);
+  }
+
   function toggle() {
     const next = !saved;
     setSaved(next);
