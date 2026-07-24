@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { unstable_cache } from "next/cache";
 import { getSupabase } from "@/lib/supabase";
 import { CompanyDirectory } from "./CompanyDirectory";
 import { CompanyCard } from "./CompanyCard";
@@ -73,6 +74,85 @@ async function fetchAllActivePostings(supabase: ReturnType<typeof getSupabase>) 
   return rows;
 }
 
+type CompanyRollup = {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl: string | null;
+  isNotable: boolean;
+  activeCount: number;
+  recentCount: number;
+  firstSeenAt: string | null;
+  mostRecentTitle: string | null;
+};
+
+// The company list + a full scan of every active posting are the same for
+// every visitor (service-role client, no RLS) and only actually change once
+// a day when the sync cron runs — so cache them instead of re-running a
+// 20+-page scan of 20k+ postings on every single /companies load. The sync
+// route calls revalidateTag("postings") right after it finishes, so this
+// stays accurate to the last sync instead of just going stale for an hour.
+//
+// Caches the reduced per-company rollup, not the raw posting rows — the
+// 20k+-row scan result is ~4MB serialized, over unstable_cache's 2MB per-entry
+// cap (confirmed by testing: it silently failed to cache and re-ran every
+// request). ~200 companies' worth of aggregates is a few KB, comfortably
+// under that cap. chartWindow/chartType are part of the function's
+// arguments, so each combination the UI can request gets its own cache
+// entry instead of overwriting a single shared one.
+const getCachedCompanyRollups = unstable_cache(
+  async (chartWindow: string, chartType: string): Promise<{ companies: CompanyRollup[]; errorMessage: string | null }> => {
+    const supabase = getSupabase();
+    const [{ data, error }, activePostings] = await Promise.all([
+      supabase
+        .from("companies")
+        .select("id, name, slug, logo_url, is_notable, postings(count)")
+        .eq("postings.is_active", true)
+        .order("name")
+        .returns<CompanyRow[]>(),
+      fetchAllActivePostings(supabase),
+    ]);
+
+    // No min()/max()-over-group in a single PostgREST call (aggregates are
+    // disabled), so reduce the active postings client-side instead.
+    const windowDays = CHART_WINDOW_DAYS[chartWindow];
+    const cutoff = windowDays === null ? null : daysAgoISO(windowDays);
+    const firstSeenAt = new Map<string, string>();
+    const mostRecent = new Map<string, { title: string; postedAt: string }>();
+    const recentCount = new Map<string, number>();
+    for (const p of activePostings) {
+      const first = firstSeenAt.get(p.company_id);
+      if (!first || p.posted_at < first) firstSeenAt.set(p.company_id, p.posted_at);
+
+      const recent = mostRecent.get(p.company_id);
+      if (!recent || p.posted_at > recent.postedAt) {
+        mostRecent.set(p.company_id, { title: p.title, postedAt: p.posted_at });
+      }
+
+      const inWindow = cutoff === null || p.posted_at >= cutoff;
+      if (inWindow && matchesChartType(p.role_type, chartType)) {
+        recentCount.set(p.company_id, (recentCount.get(p.company_id) ?? 0) + 1);
+      }
+    }
+
+    const companies = (data ?? []).map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      logoUrl: c.logo_url,
+      isNotable: c.is_notable,
+      activeCount: c.postings?.[0]?.count ?? 0,
+      recentCount: recentCount.get(c.id) ?? 0,
+      firstSeenAt: firstSeenAt.get(c.id) ?? null,
+      mostRecentTitle: mostRecent.get(c.id)?.title ?? null,
+    }));
+
+    return { companies, errorMessage: error?.message ?? null };
+  },
+  ["companies-rollups"],
+  { tags: ["postings"], revalidate: 3600 }
+);
+
 export default async function CompaniesPage(props: PageProps<"/companies">) {
   const { userId } = await auth();
   const searchParams = await props.searchParams;
@@ -83,15 +163,9 @@ export default async function CompaniesPage(props: PageProps<"/companies">) {
   const chartType = typeof searchParams.type === "string" ? searchParams.type : "";
   const supabase = getSupabase();
 
-  const [{ data, error }, activePostings, { data: savedRows }, { data: contactRows }] =
+  const [{ companies: rollups, errorMessage }, { data: savedRows }, { data: contactRows }] =
     await Promise.all([
-      supabase
-        .from("companies")
-        .select("id, name, slug, logo_url, is_notable, postings(count)")
-        .eq("postings.is_active", true)
-        .order("name")
-        .returns<CompanyRow[]>(),
-      fetchAllActivePostings(supabase),
+      getCachedCompanyRollups(chartWindow, chartType),
       userId
         ? supabase.from("saved_companies").select("company_id").eq("user_id", userId)
         : Promise.resolve({ data: [] as { company_id: string }[] }),
@@ -99,28 +173,7 @@ export default async function CompaniesPage(props: PageProps<"/companies">) {
         ? supabase.from("contacts").select("company_id").eq("user_id", userId)
         : Promise.resolve({ data: [] as { company_id: string | null }[] }),
     ]);
-
-  // No min()/max()-over-group in a single PostgREST call (aggregates are
-  // disabled), so reduce the active postings client-side instead.
-  const windowDays = CHART_WINDOW_DAYS[chartWindow];
-  const cutoff = windowDays === null ? null : daysAgoISO(windowDays);
-  const firstSeenAt = new Map<string, string>();
-  const mostRecent = new Map<string, { title: string; postedAt: string }>();
-  const recentCount = new Map<string, number>();
-  for (const p of activePostings) {
-    const first = firstSeenAt.get(p.company_id);
-    if (!first || p.posted_at < first) firstSeenAt.set(p.company_id, p.posted_at);
-
-    const recent = mostRecent.get(p.company_id);
-    if (!recent || p.posted_at > recent.postedAt) {
-      mostRecent.set(p.company_id, { title: p.title, postedAt: p.posted_at });
-    }
-
-    const inWindow = cutoff === null || p.posted_at >= cutoff;
-    if (inWindow && matchesChartType(p.role_type, chartType)) {
-      recentCount.set(p.company_id, (recentCount.get(p.company_id) ?? 0) + 1);
-    }
-  }
+  const error = errorMessage ? new Error(errorMessage) : null;
 
   const savedCompanyIds = new Set((savedRows ?? []).map((r) => r.company_id));
   const contactCounts = new Map<string, number>();
@@ -129,16 +182,8 @@ export default async function CompaniesPage(props: PageProps<"/companies">) {
     contactCounts.set(row.company_id, (contactCounts.get(row.company_id) ?? 0) + 1);
   }
 
-  const companies = (data ?? []).map((c) => ({
-    id: c.id,
-    name: c.name,
-    slug: c.slug,
-    logoUrl: c.logo_url,
-    isNotable: c.is_notable,
-    activeCount: c.postings?.[0]?.count ?? 0,
-    recentCount: recentCount.get(c.id) ?? 0,
-    firstSeenAt: firstSeenAt.get(c.id) ?? null,
-    mostRecentTitle: mostRecent.get(c.id)?.title ?? null,
+  const companies = rollups.map((c) => ({
+    ...c,
     isSaved: savedCompanyIds.has(c.id),
     contactCount: contactCounts.get(c.id) ?? 0,
   }));
