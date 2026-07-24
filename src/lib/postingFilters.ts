@@ -21,7 +21,7 @@ export function applyPostingFilters<
   if (filters.roleType) query = query.eq("role_type", filters.roleType);
   if (filters.location) query = query.ilike("location", `%${filters.location}%`);
   if (filters.keyword) query = query.ilike("title", `%${filters.keyword}%`);
-  if (filters.level === "undergrad") query = query.eq("is_phd", false);
+  if (filters.level === "undergrad") query = query.eq("is_phd", false).eq("role_type", "internship");
   if (filters.level === "phd") query = query.eq("is_phd", true);
   return query;
 }
