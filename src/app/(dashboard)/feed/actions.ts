@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 import { notifyAdminOfReport } from "@/lib/notify";
 
@@ -99,7 +100,9 @@ export async function reportBrokenLink(postingId: string, returnTo: string) {
     .single();
   if (error) throw error;
 
-  await notifyAdminOfReport(posting);
+  // The reporting user doesn't need to wait on an admin email — schedule it
+  // for after the response instead of blocking this action on Postmark.
+  after(() => notifyAdminOfReport(posting));
 
   revalidatePath("/feed");
   revalidatePath("/dashboard");
