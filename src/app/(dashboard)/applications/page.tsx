@@ -93,49 +93,55 @@ export default async function ApplicationsPage(props: PageProps<"/applications">
   if (levelFilter === "undergrad") applicationsQuery = applicationsQuery.eq("is_phd", false);
   if (levelFilter === "phd") applicationsQuery = applicationsQuery.eq("is_phd", true);
 
-  const [{ data: applications, error }, counts, flow, { data: allApplicationsForPreference }] =
-    await Promise.all([
-      userId ? applicationsQuery : Promise.resolve({ data: [], error: null }),
-      userId
-        ? getFunnelCounts(supabase, userId)
-        : Promise.resolve(Object.fromEntries(STATUSES.map((s) => [s.value, 0]))),
-      userId
-        ? getApplicationFlow(supabase, userId)
-        : Promise.resolve({ entryCount: {}, exitCount: {}, edges: [] }),
-      userId
-        ? supabase.from("applications").select("role_type, is_phd").eq("user_id", userId)
-        : Promise.resolve({ data: [] }),
-    ]);
+  // allApplications covers every application regardless of the page's
+  // filters (needed for an honest preference/applied-ids read) — used to be
+  // two separate queries against the same table+user_id (role_type/is_phd
+  // for preference, posting_id for applied-ids); merged into one, and run
+  // alongside saved_postings since neither depends on the other.
+  const [
+    { data: applications, error },
+    counts,
+    flow,
+    { data: allApplications },
+    { data: savedRows },
+  ] = await Promise.all([
+    userId ? applicationsQuery : Promise.resolve({ data: [], error: null }),
+    userId
+      ? getFunnelCounts(supabase, userId)
+      : Promise.resolve(Object.fromEntries(STATUSES.map((s) => [s.value, 0]))),
+    userId
+      ? getApplicationFlow(supabase, userId)
+      : Promise.resolve({ entryCount: {}, exitCount: {}, edges: [] }),
+    userId
+      ? supabase.from("applications").select("role_type, is_phd, posting_id").eq("user_id", userId)
+      : Promise.resolve({ data: [] as { role_type: string | null; is_phd: boolean; posting_id: string | null }[] }),
+    userId
+      ? supabase.from("saved_postings").select("posting_id").eq("user_id", userId)
+      : Promise.resolve({ data: [] as { posting_id: string }[] }),
+  ]);
+
+  const savedPostingIds = (savedRows ?? []).map((r) => r.posting_id);
+  const appliedPostingIds = new Set(
+    (allApplications ?? []).map((r) => r.posting_id).filter((id): id is string => Boolean(id))
+  );
+  const savedPostingIdSet = new Set(savedPostingIds);
+  const preference = inferPreference(allApplications ?? []);
 
   // Saved jobs — same filters as the applications list, applied to postings
   // directly (real postings, so they get the full feed-parity PostingRow).
-  const { data: savedRows } = userId
-    ? await supabase.from("saved_postings").select("posting_id").eq("user_id", userId)
-    : { data: [] };
-  const savedPostingIds = (savedRows ?? []).map((r) => r.posting_id);
-
-  let savedJobs: Awaited<ReturnType<typeof fetchPostings>> = [];
-  if (savedPostingIds.length > 0) {
-    savedJobs = await fetchPostings(supabase, {
-      ids: savedPostingIds,
-      company: companyFilter,
-      roleType: roleTypeFilter,
-      level: levelFilter,
-    });
-  }
-
-  const { data: appliedRows } = userId
-    ? await supabase
-        .from("applications")
-        .select("posting_id")
-        .eq("user_id", userId)
-        .not("posting_id", "is", null)
-    : { data: [] };
-  const appliedPostingIds = new Set((appliedRows ?? []).map((r) => r.posting_id));
-  const savedPostingIdSet = new Set(savedPostingIds);
-
-  const preference = inferPreference(allApplicationsForPreference ?? []);
-  const recommended = await fetchRecommended(supabase, preference, appliedPostingIds, savedPostingIdSet);
+  // Independent of recommended (just needs preference/applied/saved, all
+  // already resolved above), so they run together instead of sequentially.
+  const [savedJobs, recommended] = await Promise.all([
+    savedPostingIds.length > 0
+      ? fetchPostings(supabase, {
+          ids: savedPostingIds,
+          company: companyFilter,
+          roleType: roleTypeFilter,
+          level: levelFilter,
+        })
+      : Promise.resolve([] as Awaited<ReturnType<typeof fetchPostings>>),
+    fetchRecommended(supabase, preference, appliedPostingIds, savedPostingIdSet),
+  ]);
 
   return (
     <div>
