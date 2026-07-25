@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { STATUSES, PIPELINE, type ApplicationFlow } from "@/lib/applications";
 
 // Applied/OA/Interview are a *funnel* (ordinal — position in a sequence, not
@@ -96,6 +97,10 @@ function arcRibbon(
 // mixing point, not a pass-through.
 export function ApplicationSankey({ flow }: { flow: ApplicationFlow }) {
   const { entryCount, exitCount, edges } = flow;
+  // The transitions between stages only otherwise live in <title> tooltips,
+  // which need a pointer/focus to reach — this sr-only list gives a screen
+  // reader user the same edge-by-edge detail without one.
+  const descId = useId();
 
   const nodeTotal: Record<string, number> = {};
   for (const n of NODE_ORDER) nodeTotal[n] = entryCount[n] ?? 0;
@@ -242,10 +247,18 @@ export function ApplicationSankey({ flow }: { flow: ApplicationFlow }) {
       <p className="mb-2 font-mono text-[11px] text-ink-soft">
         Blue deepens with pipeline progress (Applied → OA → Interview) · final outcomes at right
       </p>
+      <ul id={descId} className="sr-only">
+        {ribbons.map((r) => (
+          <li key={r.key}>
+            {r.label}: {r.value}
+          </li>
+        ))}
+      </ul>
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${chartHeight}`}
         role="img"
         aria-label={`Application flow: ${grandTotal} total — ${summary}`}
+        aria-describedby={descId}
         className="w-full"
       >
         {ribbons.map((r) => (

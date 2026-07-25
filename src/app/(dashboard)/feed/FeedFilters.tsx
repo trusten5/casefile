@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { postingFiltersToQueryString, type PostingFilters as Filters } from "@/lib/postingFilters";
+import { useUrlFilters } from "@/lib/useUrlFilters";
 
 const ROLE_TYPES = [
   { value: "", label: "All roles" },
@@ -45,16 +45,18 @@ export function FeedFilters({
   savedCompanies?: string[];
   basePath?: string;
 }) {
-  const router = useRouter();
-  const [filters, setFilters] = useState<Filters>({
-    company: initialCompany,
-    roleType: initialRoleType,
-    location: initialLocation,
-    keyword: initialKeyword,
-    level: initialLevel,
-  });
   const [companyDropdownOpen, setCompanyDropdownOpen] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const { filters, applyImmediately, applyDebounced } = useUrlFilters<Filters>(
+    {
+      company: initialCompany,
+      roleType: initialRoleType,
+      location: initialLocation,
+      keyword: initialKeyword,
+      level: initialLevel,
+    },
+    (f) => buildFeedUrl(basePath, f),
+    TEXT_DEBOUNCE_MS
+  );
 
   const matchingSavedCompanies = savedCompanies.filter((name) =>
     name.toLowerCase().includes(filters.company.trim().toLowerCase())
@@ -65,30 +67,8 @@ export function FeedFilters({
     applyImmediately({ company: name });
   }
 
-  // Selects apply immediately; free-text fields debounce so we're not
-  // re-fetching on every keystroke.
-  function applyImmediately(patch: Partial<Filters>) {
-    clearTimeout(debounceRef.current);
-    const next = { ...filters, ...patch };
-    setFilters(next);
-    router.replace(buildFeedUrl(basePath, next));
-  }
-
-  function applyDebounced(patch: Partial<Filters>) {
-    const next = { ...filters, ...patch };
-    setFilters(next);
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(
-      () => router.replace(buildFeedUrl(basePath, next)),
-      TEXT_DEBOUNCE_MS
-    );
-  }
-
   function clearFilters() {
-    clearTimeout(debounceRef.current);
-    const next = { company: "", roleType: "", location: "", keyword: "", level: "" };
-    setFilters(next);
-    router.replace(basePath);
+    applyImmediately({ company: "", roleType: "", location: "", keyword: "", level: "" });
   }
 
   function applyPreset(id: string) {

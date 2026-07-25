@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useUrlFilters } from "@/lib/useUrlFilters";
 
 type Filters = { company: string; roleType: string; level: string };
 
@@ -42,27 +41,11 @@ export function ApplicationFilters({
   initialLevel: string;
   presets: ApplicationPreset[];
 }) {
-  const router = useRouter();
-  const [filters, setFilters] = useState<Filters>({
-    company: initialCompany,
-    roleType: initialRoleType,
-    level: initialLevel,
-  });
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-  function applyImmediately(patch: Partial<Filters>) {
-    clearTimeout(debounceRef.current);
-    const next = { ...filters, ...patch };
-    setFilters(next);
-    router.replace(buildUrl(next));
-  }
-
-  function applyDebounced(patch: Partial<Filters>) {
-    const next = { ...filters, ...patch };
-    setFilters(next);
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => router.replace(buildUrl(next)), TEXT_DEBOUNCE_MS);
-  }
+  const { filters, applyImmediately, applyDebounced } = useUrlFilters<Filters>(
+    { company: initialCompany, roleType: initialRoleType, level: initialLevel },
+    buildUrl,
+    TEXT_DEBOUNCE_MS
+  );
 
   function applyPreset(id: string) {
     const preset = presets.find((p) => p.id === id);
