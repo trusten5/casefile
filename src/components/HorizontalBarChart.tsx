@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 const CHART_HEIGHT_PER_ROW = 28;
 const CHART_ROW_GAP = 8;
 const LABEL_WIDTH = 160;
@@ -17,6 +19,9 @@ export function HorizontalBarChart({
   color: string;
   ariaLabel: string;
 }) {
+  // A single run-on aria-label reads every row as one unbroken sentence —
+  // this sr-only list lets a screen reader user navigate it row by row instead.
+  const descId = useId();
   if (rows.length === 0) return null;
 
   const max = Math.max(...rows.map((r) => r.value));
@@ -24,12 +29,21 @@ export function HorizontalBarChart({
   const chartHeight = rows.length * rowHeight;
 
   return (
-    <svg
-      viewBox={`0 0 ${LABEL_WIDTH + CHART_WIDTH + 48} ${chartHeight}`}
-      role="img"
-      aria-label={`${ariaLabel}: ${rows.map((r) => `${r.label}, ${r.value}`).join("; ")}`}
-      className="w-full"
-    >
+    <>
+      <ul id={descId} className="sr-only">
+        {rows.map((r) => (
+          <li key={r.id}>
+            {r.label}: {r.value}
+          </li>
+        ))}
+      </ul>
+      <svg
+        viewBox={`0 0 ${LABEL_WIDTH + CHART_WIDTH + 48} ${chartHeight}`}
+        role="img"
+        aria-label={ariaLabel}
+        aria-describedby={descId}
+        className="w-full"
+      >
       {rows.map((r, i) => {
         const y = i * rowHeight;
         const barWidth = Math.max(4, (r.value / max) * CHART_WIDTH);
@@ -65,6 +79,7 @@ export function HorizontalBarChart({
           </g>
         );
       })}
-    </svg>
+      </svg>
+    </>
   );
 }
