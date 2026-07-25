@@ -1,6 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { unstable_cache } from "next/cache";
 import { getSupabase } from "@/lib/supabase";
+import { getUserTier, tierAtLeast } from "@/lib/subscriptions";
+import { CompanyCard } from "./CompanyCard";
 import { CompanyDirectory } from "./CompanyDirectory";
 import { TopCompanies } from "./TopCompanies";
 
@@ -162,7 +164,7 @@ export default async function CompaniesPage(props: PageProps<"/companies">) {
   const chartType = typeof searchParams.type === "string" ? searchParams.type : "";
   const supabase = getSupabase();
 
-  const [{ companies: rollups, errorMessage }, { data: savedRows }, { data: contactRows }] =
+  const [{ companies: rollups, errorMessage }, { data: savedRows }, { data: contactRows }, tier] =
     await Promise.all([
       getCachedCompanyRollups(chartWindow, chartType),
       userId
@@ -171,8 +173,10 @@ export default async function CompaniesPage(props: PageProps<"/companies">) {
       userId
         ? supabase.from("contacts").select("company_id").eq("user_id", userId)
         : Promise.resolve({ data: [] as { company_id: string | null }[] }),
+      userId ? getUserTier(supabase, userId) : Promise.resolve("free" as const),
     ]);
   const error = errorMessage ? new Error(errorMessage) : null;
+  const freeTier = !tierAtLeast(tier, "plus");
 
   const savedCompanyIds = new Set((savedRows ?? []).map((r) => r.company_id));
   const contactCounts = new Map<string, number>();
@@ -202,8 +206,23 @@ export default async function CompaniesPage(props: PageProps<"/companies">) {
 
       <TopCompanies companies={companies} chartWindow={chartWindow} chartType={chartType} />
 
+      <h2 className="mt-12 font-display text-lg font-semibold text-ink">Saved companies</h2>
+      {companies.some((c) => c.isSaved) ? (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {companies
+            .filter((c) => c.isSaved)
+            .map((c) => (
+              <CompanyCard key={c.id} company={c} freeTier={freeTier} />
+            ))}
+        </div>
+      ) : (
+        <p className="mt-4 text-sm text-ink-soft">
+          Nothing saved yet — hit Save on a company below or in the feed.
+        </p>
+      )}
+
       <h2 className="mt-12 font-display text-lg font-semibold text-ink">All companies</h2>
-      <CompanyDirectory companies={companies} />
+      <CompanyDirectory companies={companies} freeTier={freeTier} />
     </div>
   );
 }

@@ -26,6 +26,17 @@ export function SavePostingToggle({
   const [isPending, startTransition] = useTransition();
   const [showUpsell, setShowUpsell] = useState(false);
 
+  // The same posting can render in two places at once (e.g. the feed and
+  // the dashboard's "latest postings" preview). Toggling one revalidates the
+  // page and sends this instance a fresh initialSaved — resync during render
+  // (React's documented pattern for derived state) instead of a
+  // setState-in-effect, which would render once stale before catching up.
+  const [prevInitialSaved, setPrevInitialSaved] = useState(initialSaved);
+  if (initialSaved !== prevInitialSaved) {
+    setPrevInitialSaved(initialSaved);
+    setSaved(initialSaved);
+  }
+
   function toggle() {
     const next = !saved;
     setSaved(next);

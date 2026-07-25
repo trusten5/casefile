@@ -40,8 +40,13 @@ export default async function FeedPage(props: PageProps<"/feed">) {
           .order("name")
       : Promise.resolve({ data: [] as SavedFilterRow[] }),
     userId
-      ? supabase.from("saved_companies").select("company:companies(name)").eq("user_id", userId)
-      : Promise.resolve({ data: [] as { company: { name: string } | { name: string }[] | null }[] }),
+      ? supabase
+          .from("saved_companies")
+          .select("company_id, company:companies(name)")
+          .eq("user_id", userId)
+      : Promise.resolve({
+          data: [] as { company_id: string; company: { name: string } | { name: string }[] | null }[],
+        }),
   ]);
 
   const savedCompanyNames = Array.from(
@@ -51,6 +56,7 @@ export default async function FeedPage(props: PageProps<"/feed">) {
         .filter((name): name is string => Boolean(name))
     )
   );
+  const savedCompanyIds = (savedCompanyRows ?? []).map((r) => r.company_id);
 
   const tier = userId ? await getUserTier(supabase, userId) : "free";
   const freeTier = !tierAtLeast(tier, "plus");
@@ -69,10 +75,15 @@ export default async function FeedPage(props: PageProps<"/feed">) {
   const keyword =
     typeof searchParams.keyword === "string" ? searchParams.keyword : defaultPreset?.keyword ?? "";
   const level = typeof searchParams.level === "string" ? searchParams.level : defaultPreset?.level ?? "";
+  // Its own param rather than a PostingFilters field — it's a /feed-only
+  // concept the landing teaser and digest cron (the type's other users)
+  // don't need, and it replaces the company text filter rather than
+  // combining with it, so it's not carried on saved-filter presets either.
+  const savedCompaniesOnly = searchParams.savedCompanies === "1";
 
   // `!inner` makes the embedded company filterable (company.name) — every
   // posting always has a company, so this doesn't change which rows match.
-  const query = applyPostingFilters(
+  let query = applyPostingFilters(
     supabase
       .from("postings")
       .select(
@@ -81,8 +92,16 @@ export default async function FeedPage(props: PageProps<"/feed">) {
       .eq("is_active", true)
       .order("posted_at", { ascending: false })
       .limit(60),
-    { company, roleType, location, keyword, level }
+    { company: savedCompaniesOnly ? "" : company, roleType, location, keyword, level }
   );
+  if (savedCompaniesOnly) {
+    // An empty `.in()` list would otherwise match nothing predictably across
+    // PostgREST versions — force zero rows with a UUID that can't exist.
+    query = query.in(
+      "company_id",
+      savedCompanyIds.length > 0 ? savedCompanyIds : ["00000000-0000-0000-0000-000000000000"]
+    );
+  }
 
   const { data: postings, error } = await query;
   const postingIds = (postings ?? []).map((p) => p.id);
@@ -120,6 +139,7 @@ export default async function FeedPage(props: PageProps<"/feed">) {
         initialLocation={location}
         initialKeyword={keyword}
         initialLevel={level}
+        initialSavedCompaniesOnly={savedCompaniesOnly}
         presets={(presets ?? []).map((p) => ({
           id: p.id,
           name: p.name,

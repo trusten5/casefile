@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/sync-postings",
-      "schedule": "0 13 * * *"
+      "schedule": "0 11 * * *"
     },
     {
       "path": "/api/send-digests",
