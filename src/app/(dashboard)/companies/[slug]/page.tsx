@@ -23,10 +23,10 @@ export default async function CompanyDetailPage(props: PageProps<"/companies/[sl
     .single();
   if (companyError || !company) notFound();
 
-  // None of these four depend on each other — only on company.id/userId,
+  // None of these three depend on each other — only on company.id/userId,
   // both already known — so they run as one batch instead of postings then
   // a separate batch afterward.
-  const [{ data: postings, error: postingsError }, { data: savedCompany }, { data: contacts }, tier] =
+  const [{ data: postings, error: postingsError }, { data: savedCompany }, { data: contacts }] =
     await Promise.all([
       supabase
         .from("postings")
@@ -50,7 +50,6 @@ export default async function CompanyDetailPage(props: PageProps<"/companies/[sl
             .eq("user_id", userId)
             .order("name")
         : Promise.resolve({ data: [] as { id: string; name: string; role: string | null }[] }),
-      userId ? getUserTier(supabase, userId) : Promise.resolve("free" as const),
     ]);
 
   const postingIds = (postings ?? []).map((p) => p.id);
