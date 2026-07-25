@@ -24,19 +24,26 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
   const flash = typeof searchParams.flash === "string" ? searchParams.flash : undefined;
   const supabase = getSupabase();
 
-  const { data: contact, error: contactError } = await supabase
-    .from("contacts")
-    .select("id, name, role, how_met, linkedin_url, company:companies(name, slug), company_name_input")
-    .eq("id", id)
-    .eq("user_id", userId ?? "")
-    .single();
+  // interactions only needs the route's `id`, not anything from `contact`,
+  // so it doesn't need to wait on that query — if `contact` turns out not
+  // to exist/belong to this user we notFound() below and discard both.
+  const [
+    { data: contact, error: contactError },
+    { data: interactions, error: interactionsError },
+  ] = await Promise.all([
+    supabase
+      .from("contacts")
+      .select("id, name, role, how_met, linkedin_url, company:companies(name, slug), company_name_input")
+      .eq("id", id)
+      .eq("user_id", userId ?? "")
+      .single(),
+    supabase
+      .from("interactions")
+      .select("id, type, notes, follow_up_date, occurred_at")
+      .eq("contact_id", id)
+      .order("occurred_at", { ascending: false }),
+  ]);
   if (contactError || !contact) notFound();
-
-  const { data: interactions, error: interactionsError } = await supabase
-    .from("interactions")
-    .select("id, type, notes, follow_up_date, occurred_at")
-    .eq("contact_id", id)
-    .order("occurred_at", { ascending: false });
 
   const slug = companySlug(contact.company);
   const companyName = slug ? companyDisplayName(contact.company) : contact.company_name_input;
