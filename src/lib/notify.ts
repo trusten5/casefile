@@ -23,7 +23,8 @@ export async function notifyAdminOfReport(posting: { title: string; url: string 
         }/admin/reports`,
       }),
     });
-  } catch {
+  } catch (err) {
     // Best-effort — the report itself already succeeded in the DB.
+    console.error("notifyAdminOfReport failed:", err);
   }
 }

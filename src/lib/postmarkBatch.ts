@@ -40,8 +40,9 @@ export async function sendDigestBatch(emails: DigestEmail[]): Promise<DigestEmai
         ),
       });
       return chunk;
-    } catch {
+    } catch (err) {
       // Best-effort per chunk — other chunks may have already sent.
+      console.error("sendDigestBatch chunk failed:", err);
       return [];
     }
   });

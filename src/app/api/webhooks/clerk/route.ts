@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   if (event.type === "user.deleted" && event.data.id) {
     const userId = event.data.id;
     const supabase = getSupabase();
-    await Promise.all([
+    const results = await Promise.all([
       supabase.from("applications").delete().eq("user_id", userId),
       supabase.from("contacts").delete().eq("user_id", userId),
       supabase.from("saved_postings").delete().eq("user_id", userId),
@@ -27,6 +27,15 @@ export async function POST(request: NextRequest) {
       supabase.from("user_preferences").delete().eq("user_id", userId),
       supabase.from("saved_filters").delete().eq("user_id", userId),
     ]);
+
+    // Deletes are idempotent (re-deleting an already-cleared table is a
+    // no-op), so on partial failure it's safe to 500 and let Clerk's
+    // built-in webhook retry finish the rest instead of leaving orphans.
+    const failed = results.filter((r) => r.error);
+    if (failed.length > 0) {
+      console.error("Clerk user.deleted cleanup failed:", failed.map((r) => r.error));
+      return NextResponse.json({ error: "cleanup failed" }, { status: 500 });
+    }
   }
 
   return NextResponse.json({ received: true });

@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
-export default function Error({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  // No APM wired up yet — this at least lands the stack trace in Vercel's
+  // function logs instead of vanishing once the boundary renders.
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
     <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-6 text-center">
       <h1 className="font-display text-2xl font-semibold text-ink">Something went wrong</h1>
