@@ -8,6 +8,10 @@
     {
       "path": "/api/send-digests",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/send-reengagement",
+      "schedule": "0 15 * * *"
     }
   ]
 }

@@ -28,3 +28,30 @@ export async function notifyAdminOfReport(posting: { title: string; url: string 
     console.error("notifyAdminOfReport failed:", err);
   }
 }
+
+export async function sendWelcomeEmail(to: string) {
+  const { POSTMARK_SERVER_TOKEN, POSTMARK_FROM_EMAIL } = process.env;
+  if (!POSTMARK_SERVER_TOKEN || !POSTMARK_FROM_EMAIL) return;
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+  try {
+    await fetch("https://api.postmarkapp.com/email", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-Postmark-Server-Token": POSTMARK_SERVER_TOKEN,
+      },
+      body: JSON.stringify({
+        From: POSTMARK_FROM_EMAIL,
+        To: to,
+        Subject: "Welcome — here's where to start",
+        TextBody: `Welcome aboard.\n\nThe fastest way to get value out of this: browse today's feed and save (or apply to) one posting.\n\n${siteUrl}/feed`,
+      }),
+    });
+  } catch (err) {
+    // Best-effort — signup itself already succeeded via Clerk.
+    console.error("sendWelcomeEmail failed:", err);
+  }
+}

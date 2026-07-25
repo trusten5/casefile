@@ -17,6 +17,7 @@ const isProtectedRoute = createRouteMatcher([
   "/contacts(.*)",
   "/profile(.*)",
   "/admin(.*)",
+  "/onboarding(.*)",
 ]);
 
 // /feed and /companies are public and unauthenticated, so they're the only

@@ -18,7 +18,7 @@ export default async function SignUpPage(props: PageProps<"/sign-up/[[...sign-up
       >
         ×
       </Link>
-      <SignUp />
+      <SignUp fallbackRedirectUrl="/onboarding" />
       <p className="text-xs text-ink-soft">
         By signing up, you agree to the{" "}
         <Link href="/terms" className="underline">

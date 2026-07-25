@@ -39,6 +39,32 @@ export async function updatePreferences(formData: FormData) {
   redirect(`/profile?flash=${encodeURIComponent("Preferences saved")}`);
 }
 
+export async function completeOnboarding(formData: FormData) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Not signed in");
+  const supabase = getSupabase();
+
+  const dailyGoal = Math.max(1, parseInt(String(formData.get("dailyGoal") ?? "1"), 10) || 1);
+  const school = String(formData.get("school") ?? "").trim();
+  const major = String(formData.get("major") ?? "").trim();
+
+  const { error } = await supabase.from("user_preferences").upsert(
+    {
+      user_id: userId,
+      daily_goal: dailyGoal,
+      school: school || null,
+      major: major || null,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "user_id" }
+  );
+  if (error) throw error;
+
+  redirect(
+    `/dashboard?flash=${encodeURIComponent("Welcome! Save your first posting from the feed or log one you've already applied to.")}`
+  );
+}
+
 export async function createSavedFilter(formData: FormData) {
   const { userId } = await auth();
   if (!userId) throw new Error("Not signed in");
