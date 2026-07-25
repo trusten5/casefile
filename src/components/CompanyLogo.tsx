@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export function CompanyLogo({ name, logoUrl }: { name: string; logoUrl: string | null }) {
   const [errored, setErrored] = useState(false);
@@ -14,8 +15,7 @@ export function CompanyLogo({ name, logoUrl }: { name: string; logoUrl: string |
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- external, unsized logo host; next/image needs a configured domain per-host
-    <img
+    <Image
       src={logoUrl}
       alt={`${name} logo`}
       width={36}

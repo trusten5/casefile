@@ -5,6 +5,12 @@ import type { NextConfig } from "next";
 // with time to test the auth flow against it; these are the headers that
 // carry no such risk.
 const nextConfig: NextConfig = {
+  images: {
+    // Every company logo_url comes from exactly this one host (see
+    // src/lib/scrapers/sync.ts) — not "many hosts", despite what
+    // CompanyLogo.tsx's old eslint-disable comment claimed.
+    remotePatterns: [{ protocol: "https", hostname: "icons.duckduckgo.com" }],
+  },
   async headers() {
     return [
       {
