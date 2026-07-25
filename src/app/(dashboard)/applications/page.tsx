@@ -1,16 +1,13 @@
-import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { getSupabase } from "@/lib/supabase";
 import { companyDisplayName, companyLogoUrl, companySlug } from "@/lib/companies";
 import { STATUSES, getFunnelCounts, getApplicationFlow } from "@/lib/applications";
-import { ROLE_TYPE_LABELS, ROLE_TYPE_STYLES } from "@/lib/roleType";
 import { Flash } from "@/components/Flash";
-import { CompanyLogo } from "@/components/CompanyLogo";
 import { PostingRow } from "../feed/PostingRow";
 import { ApplicationFilters } from "./ApplicationFilters";
 import { ApplicationSankey } from "./ApplicationSankey";
 import { createManualApplication } from "./actions";
-import { ApplicationStatusControl } from "./ApplicationStatusControl";
+import { ApplicationRow } from "./ApplicationRow";
 
 // Without this, the page is eligible for a prerendered shell built from
 // whatever data existed at that moment — a later real request's dynamic
@@ -222,45 +219,16 @@ export default async function ApplicationsPage(props: PageProps<"/applications">
           const companyName = companyDisplayName(application.company);
           const slug = companySlug(application.company);
           return (
-            <li
+            <ApplicationRow
               key={application.id}
-              className="flex flex-wrap items-center justify-between gap-4 py-4"
-            >
-              <div className="flex min-w-0 flex-1 items-center gap-3">
-                {slug ? (
-                  <Link href={`/companies/${slug}`}>
-                    <CompanyLogo name={companyName} logoUrl={companyLogoUrl(application.company)} />
-                  </Link>
-                ) : (
-                  <CompanyLogo name={companyName} logoUrl={companyLogoUrl(application.company)} />
-                )}
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="break-words font-medium text-ink">{application.role_title}</p>
-                    {roleType && ROLE_TYPE_LABELS[roleType] && (
-                      <span
-                        className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wide ${ROLE_TYPE_STYLES[roleType]}`}
-                      >
-                        {ROLE_TYPE_LABELS[roleType]}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-ink-soft">
-                    {slug ? (
-                      <Link href={`/companies/${slug}`} className="hover:underline">
-                        {companyName}
-                      </Link>
-                    ) : (
-                      companyName
-                    )}
-                  </p>
-                </div>
-              </div>
-              <ApplicationStatusControl
-                applicationId={application.id}
-                initialStatus={application.status}
-              />
-            </li>
+              applicationId={application.id}
+              initialStatus={application.status}
+              roleTitle={application.role_title}
+              roleType={roleType}
+              companyName={companyName}
+              slug={slug}
+              logoUrl={companyLogoUrl(application.company)}
+            />
           );
         })}
       </ul>
