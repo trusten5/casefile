@@ -34,3 +34,21 @@
   --font-display: var(--font-display);
 }
 
+/* Each onboarding step is its own page navigation (not a client-side
+   transition), so this is the one motion cue available: a small settle-in
+   on first paint rather than content just appearing static/flat. */
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-step-in {
+  animation: step-in 0.35s ease-out both;
+}
+

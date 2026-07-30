@@ -8,10 +8,35 @@ import { StepIndicator } from "@/app/onboarding/StepIndicator";
 
 export const dynamic = "force-dynamic";
 
+const RANDOM_COMPANY_COUNT = 30;
+
+function shuffle<T>(items: T[]): T[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+type CompanyOption = { id: string; name: string; logo_url: string | null };
+
+function CompanyCheckbox({ company }: { company: CompanyOption }) {
+  return (
+    <label className="flex items-center gap-2 rounded-lg border border-paper-line bg-paper px-3 py-2 text-sm text-ink transition-all duration-150 hover:-translate-y-0.5 hover:border-ink-soft hover:shadow-sm has-[:checked]:border-ink has-[:checked]:bg-ink/5 has-[:checked]:shadow-sm">
+      <input type="checkbox" name="companyId" value={company.id} className="accent-ink" />
+      <CompanyLogo name={company.name} logoUrl={company.logo_url} />
+      <span className="truncate">{company.name}</span>
+    </label>
+  );
+}
+
 // is_notable is the same hand-curated flag the /companies "Popular
 // companies" shelf uses (see 0006_saved_companies.sql) — reused here so
 // this list and that shelf never drift out of sync with two separate
-// curation lists.
+// curation lists. Everything else in the (much bigger) directory is shown
+// below in a fresh random order each visit, so there's always something new
+// to scroll through and pick from beyond the same fixed 20.
 export default async function OnboardingCompaniesPage(props: PageProps<"/onboarding/companies">) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
@@ -20,39 +45,48 @@ export default async function OnboardingCompaniesPage(props: PageProps<"/onboard
   const roleType = typeof searchParams.roleType === "string" ? searchParams.roleType : "";
 
   const supabase = getSupabase();
-  const { data: companies, error } = await supabase
-    .from("companies")
-    .select("id, name, logo_url")
-    .eq("is_notable", true)
-    .order("name")
-    .limit(12);
-  if (error) throw error;
+  const [{ data: notable, error: notableError }, { data: rest, error: restError }] = await Promise.all([
+    supabase.from("companies").select("id, name, logo_url").eq("is_notable", true).order("name"),
+    supabase.from("companies").select("id, name, logo_url").eq("is_notable", false),
+  ]);
+  if (notableError) throw notableError;
+  if (restError) throw restError;
+
+  const moreCompanies = shuffle(rest ?? []).slice(0, RANDOM_COMPANY_COUNT);
 
   return (
-    <div className="mx-auto max-w-md py-16">
+    <div className="animate-step-in mx-auto max-w-2xl py-16">
       <StepIndicator step={3} />
       <h1 className="font-display text-2xl font-semibold text-ink">Follow a few companies</h1>
       <p className="mt-2 text-sm text-ink-soft">
         Followed companies are easy to filter to on /feed and /companies — pick any that stand out.
       </p>
 
-      <form action={followSuggestedCompanies} className="mt-8 flex flex-col gap-4">
+      <form action={followSuggestedCompanies} className="mt-8 flex flex-col gap-6">
         <input type="hidden" name="redirectTo" value={redirectTo} />
         <input type="hidden" name="roleType" value={roleType} />
-        <div className="grid grid-cols-2 gap-2">
-          {companies?.map((c) => (
-            <label
-              key={c.id}
-              className="flex items-center gap-2 rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink hover:border-ink-soft"
-            >
-              <input type="checkbox" name="companyId" value={c.id} className="accent-ink" />
-              <CompanyLogo name={c.name} logoUrl={c.logo_url} />
-              <span className="truncate">{c.name}</span>
-            </label>
-          ))}
+
+        <div>
+          <h2 className="mb-2 font-mono text-[11px] uppercase tracking-wide text-ink-soft">Popular</h2>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {(notable ?? []).map((c) => (
+              <CompanyCheckbox key={c.id} company={c} />
+            ))}
+          </div>
         </div>
 
-        <div className="mt-2 flex items-center gap-3">
+        {moreCompanies.length > 0 && (
+          <div>
+            <h2 className="mb-2 font-mono text-[11px] uppercase tracking-wide text-ink-soft">More companies</h2>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {moreCompanies.map((c) => (
+                <CompanyCheckbox key={c.id} company={c} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-3">
           <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
             Continue
           </button>

@@ -26,7 +26,7 @@ export default async function OnboardingPage(props: PageProps<"/onboarding">) {
   if (data) redirect(redirectTo);
 
   return (
-    <div className="mx-auto max-w-md py-16">
+    <div className="animate-step-in mx-auto max-w-md py-16">
       <StepIndicator step={1} />
       <h1 className="font-display text-2xl font-semibold text-ink">Welcome aboard</h1>
       <p className="mt-2 text-sm text-ink-soft">

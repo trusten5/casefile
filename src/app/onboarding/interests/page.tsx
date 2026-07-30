@@ -23,7 +23,7 @@ export default async function OnboardingInterestsPage(props: PageProps<"/onboard
   const redirectTo = safeRedirectPath(searchParams.redirect_url, "/dashboard");
 
   return (
-    <div className="mx-auto max-w-md py-16">
+    <div className="animate-step-in mx-auto max-w-md py-16">
       <StepIndicator step={2} />
       <h1 className="font-display text-2xl font-semibold text-ink">What are you looking for?</h1>
       <p className="mt-2 text-sm text-ink-soft">
@@ -36,7 +36,7 @@ export default async function OnboardingInterestsPage(props: PageProps<"/onboard
           {ROLE_TYPES.map((r) => (
             <label
               key={r.value}
-              className="flex items-center gap-2 rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink hover:border-ink-soft"
+              className="flex items-center gap-2 rounded-lg border border-paper-line bg-paper px-3 py-2.5 text-sm text-ink transition-all duration-150 hover:-translate-y-0.5 hover:border-ink-soft hover:shadow-sm has-[:checked]:border-ink has-[:checked]:bg-ink/5 has-[:checked]:shadow-sm"
             >
               <input type="radio" name="roleType" value={r.value} className="accent-ink" />
               {r.label}
