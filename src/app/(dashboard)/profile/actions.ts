@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import type { FilterScope } from "@/lib/preferences";
 import { getUserTier, tierAtLeast } from "@/lib/subscriptions";
-import { safeRedirectPath, withFlash } from "@/lib/safeRedirect";
+import { safeRedirectPath } from "@/lib/safeRedirect";
 
 export async function updatePreferences(formData: FormData) {
   const { userId } = await auth();
@@ -62,7 +62,7 @@ export async function completeOnboarding(formData: FormData) {
   if (error) throw error;
 
   const redirectTo = safeRedirectPath(String(formData.get("redirectTo") ?? ""), "/dashboard");
-  redirect(withFlash(redirectTo, "Welcome! Save your first posting from the feed or log one you've already applied to."));
+  redirect(`/onboarding/interests?redirect_url=${encodeURIComponent(redirectTo)}`);
 }
 
 export async function createSavedFilter(formData: FormData) {

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import { safeRedirectPath } from "@/lib/safeRedirect";
 import { completeOnboarding } from "@/app/(dashboard)/profile/actions";
+import { StepIndicator } from "./StepIndicator";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,7 @@ export default async function OnboardingPage(props: PageProps<"/onboarding">) {
 
   return (
     <div className="mx-auto max-w-md py-16">
+      <StepIndicator step={1} />
       <h1 className="font-display text-2xl font-semibold text-ink">Welcome aboard</h1>
       <p className="mt-2 text-sm text-ink-soft">
         Quick setup, then you&rsquo;re in — all of this is optional and editable later from your profile.

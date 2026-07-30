@@ -31,7 +31,14 @@ export async function notifyAdminOfReport(posting: { title: string; url: string 
 
 export async function sendWelcomeEmail(to: string) {
   const { POSTMARK_SERVER_TOKEN, POSTMARK_FROM_EMAIL } = process.env;
-  if (!POSTMARK_SERVER_TOKEN || !POSTMARK_FROM_EMAIL) return;
+  if (!POSTMARK_SERVER_TOKEN || !POSTMARK_FROM_EMAIL) {
+    // Unlike notifyAdminOfReport, an unset Postmark config here has no other
+    // visible symptom (no admin inbox to notice it's empty) — a new user
+    // just silently never gets the email, which is otherwise hard to
+    // distinguish from the Clerk webhook simply not firing.
+    console.warn("sendWelcomeEmail skipped: POSTMARK_SERVER_TOKEN or POSTMARK_FROM_EMAIL is unset");
+    return;
+  }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
