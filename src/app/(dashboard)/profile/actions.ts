@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import type { FilterScope } from "@/lib/preferences";
 import { getUserTier, tierAtLeast } from "@/lib/subscriptions";
+import { safeRedirectPath, withFlash } from "@/lib/safeRedirect";
 
 export async function updatePreferences(formData: FormData) {
   const { userId } = await auth();
@@ -60,9 +61,8 @@ export async function completeOnboarding(formData: FormData) {
   );
   if (error) throw error;
 
-  redirect(
-    `/dashboard?flash=${encodeURIComponent("Welcome! Save your first posting from the feed or log one you've already applied to.")}`
-  );
+  const redirectTo = safeRedirectPath(String(formData.get("redirectTo") ?? ""), "/dashboard");
+  redirect(withFlash(redirectTo, "Welcome! Save your first posting from the feed or log one you've already applied to."));
 }
 
 export async function createSavedFilter(formData: FormData) {

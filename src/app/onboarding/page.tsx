@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
+import { safeRedirectPath } from "@/lib/safeRedirect";
 import { completeOnboarding } from "@/app/(dashboard)/profile/actions";
 
 export const dynamic = "force-dynamic";
@@ -9,9 +10,11 @@ export const dynamic = "force-dynamic";
 // the /profile one) — so its absence doubles as "hasn't seen onboarding yet"
 // with no separate flag to track. Once it exists, skip straight to the
 // dashboard so this screen only ever shows once.
-export default async function OnboardingPage() {
+export default async function OnboardingPage(props: PageProps<"/onboarding">) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
+  const searchParams = await props.searchParams;
+  const redirectTo = safeRedirectPath(searchParams.redirect_url, "/dashboard");
   const supabase = getSupabase();
 
   const { data } = await supabase
@@ -19,7 +22,7 @@ export default async function OnboardingPage() {
     .select("user_id")
     .eq("user_id", userId)
     .maybeSingle();
-  if (data) redirect("/dashboard");
+  if (data) redirect(redirectTo);
 
   return (
     <div className="mx-auto max-w-md py-16">
@@ -29,6 +32,7 @@ export default async function OnboardingPage() {
       </p>
 
       <form action={completeOnboarding} className="mt-8 flex flex-col gap-4">
+        <input type="hidden" name="redirectTo" value={redirectTo} />
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
           Daily application goal
           <input
