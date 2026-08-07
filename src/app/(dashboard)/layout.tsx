@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { isAdmin } from "@/lib/admin";
 import { PublicHeader } from "@/components/PublicHeader";
 import { MenuIcon } from "@/components/icons";
+import { NavLink } from "@/components/NavLink";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -37,13 +38,7 @@ export default async function DashboardLayout({
         <PublicHeader />
         <nav className="mx-auto flex w-full max-w-5xl gap-4 px-6 pb-4">
           {PUBLIC_NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-ink-soft hover:text-ink"
-            >
-              {link.label}
-            </Link>
+            <NavLink key={link.href} href={link.href} label={link.label} />
           ))}
         </nav>
         <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">{children}</main>
@@ -63,13 +58,7 @@ export default async function DashboardLayout({
         </Link>
         <nav className="hidden md:flex md:gap-4">
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-ink-soft hover:text-ink"
-            >
-              {link.label}
-            </Link>
+            <NavLink key={link.href} href={link.href} label={link.label} />
           ))}
         </nav>
         <details className="md:hidden">
@@ -81,13 +70,7 @@ export default async function DashboardLayout({
           </summary>
           <nav className="absolute inset-x-0 top-full z-10 flex flex-col gap-1 border-b border-paper-line bg-paper px-6 py-4">
             {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-ink-soft hover:text-ink"
-              >
-                {link.label}
-              </Link>
+              <NavLink key={link.href} href={link.href} label={link.label} />
             ))}
           </nav>
         </details>
