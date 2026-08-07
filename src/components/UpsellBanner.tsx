@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CloseIcon } from "@/components/icons";
 
 const SESSION_COUNT_KEY = "casefile_upsell_save_count";
 
@@ -29,7 +30,7 @@ export function UpsellBanner({ companyName }: { companyName: string }) {
   if (!eligible || dismissed) return null;
 
   return (
-    <div className="mb-4 flex max-w-md items-center justify-between gap-3 rounded-md border border-paper-line bg-tab/10 px-3 py-2 text-xs text-ink-soft">
+    <div className="mb-4 flex max-w-md items-center justify-between gap-3 rounded border border-paper-line bg-tab/10 px-3 py-2 text-xs text-ink-soft">
       <span>
         Get emailed when {companyName} posts something new —{" "}
         <Link href="/profile" className="font-medium text-ink underline">
@@ -42,7 +43,7 @@ export function UpsellBanner({ companyName }: { companyName: string }) {
         aria-label="Dismiss"
         className="shrink-0 text-ink-soft hover:text-ink"
       >
-        ×
+        <CloseIcon className="h-3.5 w-3.5" />
       </button>
     </div>
   );

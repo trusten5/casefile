@@ -39,7 +39,7 @@ export function ChartFilters({
         <select
           value={initialWindow}
           onChange={(e) => router.replace(buildUrl(e.target.value, initialType))}
-          className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         >
           {WINDOWS.map((w) => (
             <option key={w.value} value={w.value}>
@@ -53,7 +53,7 @@ export function ChartFilters({
         <select
           value={initialType}
           onChange={(e) => router.replace(buildUrl(initialWindow, e.target.value))}
-          className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         >
           {TYPES.map((t) => (
             <option key={t.value} value={t.value}>

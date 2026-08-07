@@ -23,7 +23,7 @@ type CompanyOption = { id: string; name: string; logo_url: string | null };
 
 function CompanyCheckbox({ company }: { company: CompanyOption }) {
   return (
-    <label className="flex items-center gap-2 rounded-lg border border-paper-line bg-paper px-3 py-2 text-sm text-ink transition-all duration-150 hover:-translate-y-0.5 hover:border-ink-soft hover:shadow-sm has-[:checked]:border-ink has-[:checked]:bg-ink/5 has-[:checked]:shadow-sm">
+    <label className="flex items-center gap-2 rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink transition-colors duration-150 hover:border-ink-soft has-[:checked]:border-ink has-[:checked]:bg-ink/5">
       <input type="checkbox" name="companyId" value={company.id} className="accent-ink" />
       <CompanyLogo name={company.name} logoUrl={company.logo_url} />
       <span className="truncate">{company.name}</span>
@@ -87,7 +87,7 @@ export default async function OnboardingCompaniesPage(props: PageProps<"/onboard
         )}
 
         <div className="flex items-center gap-3">
-          <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+          <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
             Continue
           </button>
           <button type="submit" className="text-sm text-ink-soft hover:text-ink">

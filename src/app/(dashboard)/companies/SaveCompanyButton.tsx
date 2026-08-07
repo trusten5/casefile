@@ -51,8 +51,8 @@ export function SaveCompanyButton({
         disabled={isPending}
         className={
           saved
-            ? "rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper disabled:opacity-50"
-            : "rounded-md border border-paper-line px-4 py-2 text-sm text-ink disabled:opacity-50"
+            ? "rounded bg-ink px-4 py-2 text-sm font-medium text-paper disabled:opacity-50"
+            : "rounded border border-paper-line px-4 py-2 text-sm text-ink disabled:opacity-50"
         }
       >
         {saved ? "Saved ✓" : "Save company"}

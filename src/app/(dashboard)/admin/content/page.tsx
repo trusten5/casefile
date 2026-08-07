@@ -40,7 +40,7 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
       </p>
 
       {row?.curated_feed && (
-        <div className="mt-6 rounded-md border border-paper-line p-4">
+        <div className="mt-6 rounded border border-paper-line p-4">
           <h2 className="font-display text-lg text-ink">Today&apos;s finds</h2>
           <p className="mt-1 text-sm text-ink-soft">
             Not auto-posted — source material for you to look into, headlines/links only.
@@ -53,7 +53,7 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
         <form action={saveContentDraft.bind(null, row.batch_date)} className="mt-8 space-y-8">
           <input type="hidden" name="postCount" value={drafts.length} />
           {drafts.map((draft, i) => (
-            <fieldset key={draft.label} className="rounded-md border border-paper-line p-4">
+            <fieldset key={draft.label} className="rounded border border-paper-line p-4">
               <legend className="px-1 font-display text-lg text-ink">{draft.pillarTitle}</legend>
               <input type="hidden" name={`label__${i}`} value={draft.label} />
               <input type="hidden" name={`pillarTitle__${i}`} value={draft.pillarTitle} />
@@ -65,7 +65,7 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
                   type="text"
                   name={`hook__${i}`}
                   defaultValue={draft.post.hook}
-                  className="mt-1 w-full rounded-md border border-paper-line bg-paper px-3 py-1.5 text-sm text-ink"
+                  className="mt-1 w-full rounded border border-paper-line bg-paper px-3 py-1.5 text-sm text-ink"
                 />
               </label>
 
@@ -75,7 +75,7 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
                   type="text"
                   name={`caption__${i}`}
                   defaultValue={draft.post.caption}
-                  className="mt-1 w-full rounded-md border border-paper-line bg-paper px-3 py-1.5 text-sm text-ink"
+                  className="mt-1 w-full rounded border border-paper-line bg-paper px-3 py-1.5 text-sm text-ink"
                 />
               </label>
 
@@ -85,13 +85,13 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
                   type="text"
                   name={`hashtags__${i}`}
                   defaultValue={draft.post.hashtags.join(", ")}
-                  className="mt-1 w-full rounded-md border border-paper-line bg-paper px-3 py-1.5 text-sm text-ink"
+                  className="mt-1 w-full rounded border border-paper-line bg-paper px-3 py-1.5 text-sm text-ink"
                 />
               </label>
 
               <div className="mt-4 space-y-3">
                 {draft.post.slides.map((slide, j) => (
-                  <div key={j} className="rounded-md border border-paper-line p-3">
+                  <div key={j} className="rounded border border-paper-line p-3">
                     <p className="font-mono text-xs text-ink-soft">
                       {draft.label}/slide-{j + 1}.png
                     </p>
@@ -100,14 +100,14 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
                       name={`text__${i}__${j}`}
                       defaultValue={slide.text}
                       rows={2}
-                      className="mt-1 w-full rounded-md border border-paper-line bg-paper px-3 py-1.5 text-sm text-ink"
+                      className="mt-1 w-full rounded border border-paper-line bg-paper px-3 py-1.5 text-sm text-ink"
                     />
                     <input
                       type="text"
                       name={`photo__${i}__${j}`}
                       defaultValue={slide.photo ?? ""}
                       placeholder="photo filename"
-                      className="mt-1 w-full rounded-md border border-paper-line bg-paper px-3 py-1.5 font-mono text-xs text-ink"
+                      className="mt-1 w-full rounded border border-paper-line bg-paper px-3 py-1.5 font-mono text-xs text-ink"
                     />
                   </div>
                 ))}
@@ -115,7 +115,7 @@ export default async function AdminContentPage(props: PageProps<"/admin/content"
             </fieldset>
           ))}
 
-          <button type="submit" className="rounded-md bg-status-offer px-4 py-2 text-sm font-medium text-paper">
+          <button type="submit" className="rounded bg-status-offer px-4 py-2 text-sm font-medium text-paper">
             Done editing
           </button>
         </form>

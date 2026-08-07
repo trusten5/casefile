@@ -36,7 +36,7 @@ export default async function OnboardingInterestsPage(props: PageProps<"/onboard
           {ROLE_TYPES.map((r) => (
             <label
               key={r.value}
-              className="flex items-center gap-2 rounded-lg border border-paper-line bg-paper px-3 py-2.5 text-sm text-ink transition-all duration-150 hover:-translate-y-0.5 hover:border-ink-soft hover:shadow-sm has-[:checked]:border-ink has-[:checked]:bg-ink/5 has-[:checked]:shadow-sm"
+              className="flex items-center gap-2 rounded border border-paper-line bg-paper px-3 py-2.5 text-sm text-ink transition-colors duration-150 hover:border-ink-soft has-[:checked]:border-ink has-[:checked]:bg-ink/5"
             >
               <input type="radio" name="roleType" value={r.value} className="accent-ink" />
               {r.label}
@@ -45,7 +45,7 @@ export default async function OnboardingInterestsPage(props: PageProps<"/onboard
         </div>
 
         <div className="mt-2 flex items-center gap-3">
-          <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+          <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
             Continue
           </button>
           <button type="submit" className="text-sm text-ink-soft hover:text-ink">

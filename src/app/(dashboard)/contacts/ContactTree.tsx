@@ -17,7 +17,7 @@ function TreeNode({ node }: { node: ContactTreeNode }) {
     <li>
       <Link
         href={`/contacts/${node.id}`}
-        className="flex min-w-0 items-center gap-2 rounded-md py-1 hover:bg-tab/10"
+        className="flex min-w-0 items-center gap-2 rounded py-1 hover:bg-tab/10"
       >
         <Avatar name={node.name} />
         <span className="min-w-0">
@@ -56,7 +56,7 @@ export function ContactTree({ categories }: { categories: Category[] }) {
   return (
     <div className="mt-3 grid gap-4 sm:grid-cols-2">
       {active.map((cat) => (
-        <div key={cat.value} className="rounded-lg border border-paper-line bg-tab/10 p-4">
+        <div key={cat.value} className="rounded border border-paper-line bg-tab/10 p-4">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">{cat.label}</p>
           <ul className="mt-3 space-y-1">
             {cat.roots.map((root) => (

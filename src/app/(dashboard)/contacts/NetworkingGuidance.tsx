@@ -19,7 +19,7 @@ export function NetworkingGuidance() {
         <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Email templates</p>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           {EMAIL_TEMPLATES.map((t) => (
-            <div key={t.id} className="rounded-lg border border-paper-line bg-paper p-4">
+            <div key={t.id} className="rounded border border-paper-line bg-paper p-4">
               <p className="font-medium text-ink">{t.label}</p>
               <p className="mt-1 text-xs text-ink-soft">Subject: {t.subject}</p>
               <pre className="mt-2 whitespace-pre-wrap font-sans text-sm text-ink-soft">{t.body}</pre>

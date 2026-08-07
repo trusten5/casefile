@@ -121,7 +121,7 @@ export default async function CompanyDetailPage(props: PageProps<"/companies/[sl
                 <Link
                   key={c.id}
                   href={`/contacts/${c.id}`}
-                  className="flex items-center gap-2 rounded-full border border-paper-line bg-tab/20 py-1.5 pl-2 pr-4 hover:border-ink-soft"
+                  className="flex items-center gap-2 rounded border border-paper-line bg-tab/20 py-1.5 pl-2 pr-4 hover:border-ink-soft"
                 >
                   <Avatar name={c.name} />
                   <span className="text-sm font-medium text-ink">

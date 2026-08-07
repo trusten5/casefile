@@ -133,7 +133,7 @@ export function ApplyControl({
         >
           <FlagIcon />
         </button>
-        <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-paper-line bg-paper px-2 py-1 text-xs text-ink opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+        <span className="stamp-pop pointer-events-none absolute left-1/2 top-full z-10 mt-1 -translate-x-1/2 whitespace-nowrap px-2 py-1 text-xs text-ink opacity-0 transition-opacity group-hover:opacity-100">
           Report broken link
         </span>
       </div>
@@ -141,21 +141,21 @@ export function ApplyControl({
       {showPrompt && (
         <div
           ref={popupRef}
-          className="absolute right-0 top-full z-10 mt-2 w-52 rounded-md border border-paper-line bg-paper p-3 shadow-md"
+          className="stamp-pop absolute right-0 top-full z-10 mt-2 w-52 p-3"
         >
           <p className="text-sm text-ink">Did you apply?</p>
           <div className="mt-2 flex gap-2">
             <button
               type="button"
               onClick={markApplied}
-              className="rounded-md bg-ink px-2 py-1 text-xs font-medium text-paper"
+              className="rounded bg-ink px-2 py-1 text-xs font-medium text-paper"
             >
               Yes
             </button>
             <button
               type="button"
               onClick={() => setShowPrompt(false)}
-              className="rounded-md border border-paper-line px-2 py-1 text-xs text-ink"
+              className="rounded border border-paper-line px-2 py-1 text-xs text-ink"
             >
               Not yet
             </button>

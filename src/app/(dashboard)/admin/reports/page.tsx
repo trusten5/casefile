@@ -96,13 +96,13 @@ export default async function AdminReportsPage(props: PageProps<"/admin/reports"
       <Flash message={flash} />
       <Link
         href="/admin/content"
-        className="inline-block rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink"
+        className="inline-block rounded border border-paper-line px-3 py-1.5 text-sm text-ink"
       >
         Content draft →
       </Link>
       <Link
         href="/admin/feature-requests"
-        className="ml-2 inline-block rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink"
+        className="ml-2 inline-block rounded border border-paper-line px-3 py-1.5 text-sm text-ink"
       >
         Feature requests →
       </Link>
@@ -144,7 +144,7 @@ export default async function AdminReportsPage(props: PageProps<"/admin/reports"
               <form action={confirmBroken.bind(null, posting.id)}>
                 <button
                   type="submit"
-                  className="rounded-md bg-status-rejected px-3 py-1.5 text-sm font-medium text-paper"
+                  className="rounded bg-status-rejected px-3 py-1.5 text-sm font-medium text-paper"
                 >
                   Confirm broken
                 </button>
@@ -152,7 +152,7 @@ export default async function AdminReportsPage(props: PageProps<"/admin/reports"
               <form action={dismissReport.bind(null, posting.id)}>
                 <button
                   type="submit"
-                  className="rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink"
+                  className="rounded border border-paper-line px-3 py-1.5 text-sm text-ink"
                 >
                   Dismiss
                 </button>

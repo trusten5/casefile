@@ -42,26 +42,26 @@ export default async function OnboardingPage(props: PageProps<"/onboarding">) {
             name="dailyGoal"
             min={1}
             defaultValue={1}
-            className="w-24 rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="w-24 rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
           School
           <input
             name="school"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
           Major
           <input
             name="major"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
 
         <div className="mt-2 flex items-center gap-3">
-          <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+          <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
             Get started
           </button>
           <button type="submit" className="text-sm text-ink-soft hover:text-ink">

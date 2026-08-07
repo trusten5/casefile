@@ -88,7 +88,7 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
           <select
             name="type"
             defaultValue="coffee_chat"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             {Object.entries(INTERACTION_TYPE_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
@@ -102,7 +102,7 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
           <input
             type="date"
             name="occurredAt"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -110,7 +110,7 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
           <input
             type="date"
             name="followUpDate"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex min-w-[220px] flex-1 flex-col gap-1 text-xs text-ink-soft">
@@ -118,10 +118,10 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
           <input
             name="notes"
             placeholder="Optional"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
-        <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+        <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
           Log it
         </button>
       </form>
@@ -138,7 +138,7 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
           {interactions.map((i) => (
             <li key={i.id} className="py-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-status-applied/15 px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wide text-status-applied">
+                <span className="rounded border border-status-applied px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wide text-status-applied">
                   {INTERACTION_TYPE_LABELS[i.type] ?? i.type}
                 </span>
                 <span className="font-mono text-xs text-ink-soft">

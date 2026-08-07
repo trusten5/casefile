@@ -34,7 +34,7 @@ export function NetworkChart({ companies }: { companies: CompanyNetwork[] }) {
   }));
 
   return (
-    <div className="mt-3 rounded-lg border border-paper-line bg-tab/10 p-4">
+    <div className="mt-3 rounded border border-paper-line bg-tab/10 p-4">
       <HorizontalBarChart
         rows={rows}
         color={BAR_COLOR}

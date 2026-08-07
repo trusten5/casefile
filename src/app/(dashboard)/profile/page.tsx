@@ -96,7 +96,7 @@ function FilterScopeSection({
                 <p className="truncate font-medium text-ink">
                   {f.name}
                   {f.is_default && (
-                    <span className="ml-2 rounded-full bg-status-offer/15 px-2 py-0.5 font-mono text-[11px] font-medium text-status-offer">
+                    <span className="ml-2 rounded border border-status-offer px-2 py-0.5 font-mono text-[11px] font-medium text-status-offer">
                       Default
                     </span>
                   )}
@@ -107,7 +107,7 @@ function FilterScopeSection({
                 <form action={setDefaultFilter.bind(null, f.id, scope, !f.is_default)}>
                   <button
                     type="submit"
-                    className="rounded-md border border-paper-line px-3 py-1.5 text-xs text-ink"
+                    className="rounded border border-paper-line px-3 py-1.5 text-xs text-ink"
                   >
                     {f.is_default ? "Unset default" : "Set as default"}
                   </button>
@@ -131,7 +131,7 @@ function FilterScopeSection({
             name="name"
             required
             placeholder="e.g. Remote internships"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -139,7 +139,7 @@ function FilterScopeSection({
           <input
             name="company"
             placeholder="Optional"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -147,7 +147,7 @@ function FilterScopeSection({
           <select
             name="roleType"
             defaultValue=""
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             <option value="">All roles</option>
             {Object.entries(ROLE_TYPE_LABELS).map(([value, label]) => (
@@ -164,7 +164,7 @@ function FilterScopeSection({
               <input
                 name="location"
                 placeholder="Optional"
-                className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+                className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
               />
             </label>
             <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -172,7 +172,7 @@ function FilterScopeSection({
               <input
                 name="keyword"
                 placeholder="Optional"
-                className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+                className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
               />
             </label>
           </>
@@ -182,14 +182,14 @@ function FilterScopeSection({
           <select
             name="level"
             defaultValue=""
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             <option value="">All</option>
             <option value="undergrad">Undergrad</option>
             <option value="phd">PhD</option>
           </select>
         </label>
-        <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+        <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
           Save filter
         </button>
       </form>
@@ -209,7 +209,7 @@ function FilterScopeSection({
                 <input type="hidden" name="level" value={s.level ?? ""} />
                 <button
                   type="submit"
-                  className="rounded-full border border-paper-line px-3 py-1.5 text-xs text-ink-soft hover:border-ink-soft hover:text-ink"
+                  className="rounded border border-paper-line px-3 py-1.5 text-xs text-ink-soft hover:border-ink-soft hover:text-ink"
                 >
                   + {s.name}
                 </button>
@@ -273,7 +273,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
 
         <div className="mt-6 grid gap-6 sm:grid-cols-2">
           {PLANS.map((plan) => (
-            <div key={plan.tier} className="rounded-xl border border-paper-line p-6">
+            <div key={plan.tier} className="rounded border border-paper-line p-6">
               <h3 className="font-display text-xl font-semibold text-ink">{plan.name}</h3>
               <p className="mt-2 text-sm text-ink-soft">{plan.blurb}</p>
               <p className="mt-4 font-display text-2xl font-semibold text-ink">{plan.price}</p>
@@ -285,7 +285,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
                 <button
                   type="button"
                   disabled
-                  className="mt-6 w-full rounded-full border border-paper-line px-4 py-2 text-sm font-medium text-ink-soft"
+                  className="mt-6 w-full rounded border border-paper-line px-4 py-2 text-sm font-medium text-ink-soft"
                 >
                   Coming soon
                 </button>
@@ -293,7 +293,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
                 <button
                   type="button"
                   disabled
-                  className="mt-6 w-full rounded-full border border-paper-line px-4 py-2 text-sm font-medium text-ink-soft"
+                  className="mt-6 w-full rounded border border-paper-line px-4 py-2 text-sm font-medium text-ink-soft"
                 >
                   Included in your plan
                 </button>
@@ -301,7 +301,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
                 <form action={createCheckoutSession.bind(null, plan.annualPriceId)}>
                   <button
                     type="submit"
-                    className="mt-6 w-full rounded-full border border-paper-line px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
+                    className="mt-6 w-full rounded border border-paper-line px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
                   >
                     Subscribe annually
                   </button>
@@ -325,7 +325,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
           <form action={createPortalSession} className="mt-6">
             <button
               type="submit"
-              className="rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink hover:border-ink-soft"
+              className="rounded border border-paper-line px-4 py-1.5 text-sm font-medium text-ink hover:border-ink-soft"
             >
               Manage subscription
             </button>
@@ -353,14 +353,14 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
             <select
               name="digestCadence"
               defaultValue={preferences.digestCadence}
-              className="rounded-md border border-paper-line px-3 py-1.5 text-sm"
+              className="rounded border border-paper-line px-3 py-1.5 text-sm"
             >
               <option value="daily">Daily</option>
               <option value="weekly">Weekly (Mondays)</option>
             </select>
             <button
               type="submit"
-              className="rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink hover:border-ink-soft"
+              className="rounded border border-paper-line px-4 py-1.5 text-sm font-medium text-ink hover:border-ink-soft"
             >
               Save
             </button>
@@ -378,7 +378,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
               name="dailyGoal"
               min={1}
               defaultValue={preferences.dailyGoal}
-              className="w-24 rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+              className="w-24 rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
             />
           </label>
           <OptionalField name="school" label="School" defaultValue={preferences.school ?? ""} />
@@ -399,7 +399,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
             label="Cover letter link"
             defaultValue={preferences.coverLetterUrl ?? ""}
           />
-          <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+          <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
             Save
           </button>
         </form>
@@ -438,11 +438,11 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
             maxLength={2000}
             rows={4}
             placeholder="What would help your internship search?"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
           <button
             type="submit"
-            className="self-start rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper"
+            className="self-start rounded bg-ink px-4 py-2 text-sm font-medium text-paper"
           >
             Submit
           </button>

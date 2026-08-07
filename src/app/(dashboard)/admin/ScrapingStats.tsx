@@ -75,20 +75,20 @@ export function ScrapingStats({
       </p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-4">
-        <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+        <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Active postings</p>
           <p className="font-display text-xl font-semibold text-ink">{totalActive.toLocaleString()}</p>
         </div>
-        <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+        <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Companies tracked</p>
           <p className="font-display text-xl font-semibold text-ink">{totalCompanies.toLocaleString()}</p>
         </div>
-        <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+        <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Cron schedule</p>
           <p className="font-display text-xl font-semibold text-ink">Daily · 13:00 UTC</p>
           <p className="mt-0.5 text-xs text-ink-soft">Hobby tier caps this at 1/day</p>
         </div>
-        <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+        <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Last run</p>
           {lastRun ? (
             <>
@@ -116,14 +116,14 @@ export function ScrapingStats({
       <div className="mt-8 grid gap-8 lg:grid-cols-2">
         <div>
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Postings by source</p>
-          <div className="mt-3 rounded-lg border border-paper-line bg-tab/10 p-4">
+          <div className="mt-3 rounded border border-paper-line bg-tab/10 p-4">
             {sourceRows.length > 0 ? (
               <div className="space-y-3">
                 {sourceRows.map((r) => (
                   <HorizontalBarChart
                     key={r.id}
                     rows={[r]}
-                    color={SOURCE_COLORS[r.id] ?? "#55584f"}
+                    color={SOURCE_COLORS[r.id] ?? "#52616f"}
                     ariaLabel={r.label}
                   />
                 ))}
@@ -136,7 +136,7 @@ export function ScrapingStats({
 
         <div>
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Top companies</p>
-          <div className="mt-3 rounded-lg border border-paper-line bg-tab/10 p-4">
+          <div className="mt-3 rounded border border-paper-line bg-tab/10 p-4">
             {topRows.length > 0 ? (
               <HorizontalBarChart rows={topRows} color="#2B3A55" ariaLabel="Top companies by active postings" />
             ) : (
@@ -149,7 +149,7 @@ export function ScrapingStats({
       {roleTotal > 0 && (
         <div className="mt-8">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Role type mix</p>
-          <div className="mt-3 flex h-6 overflow-hidden rounded-md border border-paper-line">
+          <div className="mt-3 flex h-6 overflow-hidden rounded border border-paper-line">
             <div
               style={{ width: `${(roleCounts.full_time / roleTotal) * 100}%` }}
               className="bg-[#a9631f]"
@@ -181,7 +181,7 @@ export function ScrapingStats({
             No runs logged yet — the next cron invocation (or a manual trigger) will show up here.
           </p>
         ) : (
-          <div className="mt-3 overflow-x-auto rounded-lg border border-paper-line">
+          <div className="mt-3 overflow-x-auto rounded border border-paper-line">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-paper-line text-left font-mono text-xs uppercase tracking-wide text-ink-soft">

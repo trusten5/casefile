@@ -208,15 +208,15 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
       <section className="mt-8">
         <h2 className="font-display text-lg font-semibold text-ink">Next actions</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+          <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
             <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Overdue follow-ups</p>
             <p className="font-display text-xl font-semibold text-ink">{overdueContacts.length}</p>
           </div>
-          <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+          <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
             <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Never followed up</p>
             <p className="font-display text-xl font-semibold text-ink">{neverContactedContacts.length}</p>
           </div>
-          <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+          <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
             <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Going stale</p>
             <p className="font-display text-xl font-semibold text-ink">{staleContacts.length}</p>
           </div>
@@ -266,7 +266,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
           <input
             name="name"
             required
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -274,7 +274,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
           <input
             name="companyName"
             placeholder="Optional"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -282,7 +282,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
           <input
             name="role"
             placeholder="Optional"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -290,7 +290,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
           <select
             name="howMetCategory"
             defaultValue="other"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             {HOW_MET_CATEGORIES.map((cat) => (
               <option key={cat.value} value={cat.value}>
@@ -305,7 +305,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
             <select
               name="referredByContactId"
               defaultValue=""
-              className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+              className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
             >
               <option value="">Nobody in particular</option>
               {contacts.map((c) => (
@@ -321,7 +321,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
           <input
             name="howMet"
             placeholder="e.g. Career fair, mutual friend"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -329,10 +329,10 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
           <input
             name="linkedinUrl"
             placeholder="Optional"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
-        <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+        <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
           Add contact
         </button>
       </form>
@@ -354,14 +354,14 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
       />
 
       {contacts.length < GUIDE_CALLOUT_THRESHOLD && (
-        <div className="mt-10 rounded-xl border border-dashed border-paper-line p-6 text-center">
+        <div className="mt-10 rounded border border-dashed border-paper-line p-6 text-center">
           <p className="text-sm text-ink-soft">
             New to networking? Get a few tips on getting started, plus email templates for reaching
             out.
           </p>
           <Link
             href="/contacts/guide"
-            className="mt-4 inline-block rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper"
+            className="mt-4 inline-block rounded bg-ink px-4 py-2 text-sm font-medium text-paper"
           >
             Open the networking guide
           </Link>

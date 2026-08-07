@@ -25,7 +25,7 @@ export function OptionalField({
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="rounded-md border border-dashed border-paper-line px-3 py-2 text-sm text-ink-soft hover:border-ink-soft hover:text-ink"
+        className="rounded border border-dashed border-paper-line px-3 py-2 text-sm text-ink-soft hover:border-ink-soft hover:text-ink"
       >
         + {label}
       </button>
@@ -40,7 +40,7 @@ export function OptionalField({
         defaultValue={defaultValue}
         placeholder={placeholder}
         autoFocus
-        className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+        className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
       />
     </label>
   );

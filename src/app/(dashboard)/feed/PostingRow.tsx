@@ -62,7 +62,7 @@ export function PostingRow({
             <p className="break-words font-medium text-ink">{posting.title}</p>
             {roleType && ROLE_TYPE_LABELS[roleType] && (
               <span
-                className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wide ${ROLE_TYPE_STYLES[roleType]}`}
+                className={`shrink-0 rounded border px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wide ${ROLE_TYPE_STYLES[roleType]}`}
               >
                 {ROLE_TYPE_LABELS[roleType]}
               </span>

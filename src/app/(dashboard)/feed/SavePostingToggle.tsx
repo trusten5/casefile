@@ -57,8 +57,8 @@ export function SavePostingToggle({
         disabled={isPending}
         className={
           saved
-            ? "rounded-md bg-ink px-3 py-1.5 text-sm font-medium text-paper disabled:opacity-50"
-            : "rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink disabled:opacity-50"
+            ? "rounded bg-ink px-3 py-1.5 text-sm font-medium text-paper disabled:opacity-50"
+            : "rounded border border-paper-line px-3 py-1.5 text-sm text-ink disabled:opacity-50"
         }
       >
         {saved ? "Saved ✓" : "Save"}

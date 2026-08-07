@@ -101,7 +101,7 @@ export function ApplicationRow({
             <p className="break-words font-medium text-ink">{roleTitle}</p>
             {roleType && ROLE_TYPE_LABELS[roleType] && (
               <span
-                className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wide ${ROLE_TYPE_STYLES[roleType]}`}
+                className={`shrink-0 rounded border px-2 py-0.5 font-mono text-[11px] font-medium uppercase tracking-wide ${ROLE_TYPE_STYLES[roleType]}`}
               >
                 {ROLE_TYPE_LABELS[roleType]}
               </span>
@@ -124,7 +124,7 @@ export function ApplicationRow({
           value={status}
           onChange={(e) => onStatusChange(e.target.value)}
           disabled={isPending}
-          className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink disabled:opacity-50"
+          className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink disabled:opacity-50"
         >
           {STATUSES.map((s) => (
             <option key={s.value} value={s.value}>
@@ -142,7 +142,7 @@ export function ApplicationRow({
         </button>
 
         {pending && (
-          <div className="absolute right-0 top-full z-10 mt-2 w-64 rounded-md border border-paper-line bg-paper p-3 shadow-md">
+          <div className="stamp-pop absolute right-0 top-full z-10 mt-2 w-64 p-3">
             <p className="text-sm text-ink">
               Jumping to {STATUS_LABEL[pending.next]} — did this go through these first?
             </p>
@@ -163,14 +163,14 @@ export function ApplicationRow({
               <button
                 type="button"
                 onClick={() => commitChange(pending.next, Array.from(pending.checked))}
-                className="rounded-md bg-ink px-2 py-1 text-xs font-medium text-paper"
+                className="rounded bg-ink px-2 py-1 text-xs font-medium text-paper"
               >
                 Confirm
               </button>
               <button
                 type="button"
                 onClick={() => setPending(null)}
-                className="rounded-md border border-paper-line px-2 py-1 text-xs text-ink"
+                className="rounded border border-paper-line px-2 py-1 text-xs text-ink"
               >
                 Cancel
               </button>
