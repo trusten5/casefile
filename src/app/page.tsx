@@ -12,7 +12,7 @@ import { PostingRow } from "./(dashboard)/feed/PostingRow";
 import { FeedFilters } from "./(dashboard)/feed/FeedFilters";
 
 const CTA_CLASS =
-  "inline-flex items-center justify-center rounded bg-ink px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-cobalt focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobalt";
+  "inline-flex items-center justify-center rounded bg-cobalt px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobalt";
 
 function TeaserCard({ tab, heading, body }: { tab: string; heading: string; body: string }) {
   return (
