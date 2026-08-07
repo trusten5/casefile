@@ -14,6 +14,54 @@ import { FeedFilters } from "./(dashboard)/feed/FeedFilters";
 const CTA_CLASS =
   "inline-flex items-center justify-center rounded bg-cobalt px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cobalt";
 
+// Flat, outline-only marks — no blur, no gradient, consistent with the
+// rest of the app's stamped-paper language. A little texture in the
+// margins, not a hero illustration.
+function BackgroundMarks() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+      <svg
+        className="absolute right-[6%] top-[4%] h-28 w-28 text-cobalt opacity-[0.14]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+      >
+        <circle cx="12" cy="12" r="10" />
+      </svg>
+      <svg
+        className="absolute left-[3%] top-[34%] h-10 w-10 text-cobalt opacity-[0.22]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      >
+        <line x1="12" y1="4" x2="12" y2="20" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+      </svg>
+      <svg
+        className="absolute right-[16%] bottom-[8%] h-7 w-7 text-cobalt opacity-[0.25]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      >
+        <line x1="12" y1="4" x2="12" y2="20" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+      </svg>
+      <svg
+        className="absolute left-[8%] bottom-[2%] h-36 w-36 text-cobalt opacity-[0.09]"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1"
+      >
+        <circle cx="12" cy="12" r="10" />
+      </svg>
+    </div>
+  );
+}
+
 function TeaserCard({ tab, heading, body }: { tab: string; heading: string; body: string }) {
   return (
     <div className="relative pt-7">
@@ -59,7 +107,8 @@ export default async function Home(props: PageProps<"/">) {
       <PublicHeader />
 
       {/* hero: the live feed itself */}
-      <section className="mx-auto w-full max-w-5xl px-6 pb-16 pt-4">
+      <section className="relative mx-auto w-full max-w-5xl px-6 pb-16 pt-4">
+        <BackgroundMarks />
         <p className="font-mono text-xs font-medium uppercase tracking-widest text-status-rejected">
           Fall recruiting starts in weeks
         </p>

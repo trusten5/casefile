@@ -68,6 +68,7 @@ export default function RootLayout({
         className={`${displayFont.variable} ${sansFont.variable} ${monoFont.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col bg-paper text-ink font-sans">
+          <div className="h-1 w-full bg-cobalt" aria-hidden="true" />
           {children}
           <SpeedInsights />
         </body>
