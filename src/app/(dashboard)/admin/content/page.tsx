@@ -3,9 +3,7 @@ import { getSupabase } from "@/lib/supabase";
 import { isAdmin } from "@/lib/admin";
 import { Flash } from "@/components/Flash";
 import { saveContentDraft } from "./actions";
-// Type-only import — no runtime code from scripts/content-engine ships in
-// the app bundle, just the shape of a batch draft.
-import type { Draft } from "../../../../../scripts/content-engine/generateCopy";
+import type { Draft } from "@/lib/contentDrafts";
 
 export const dynamic = "force-dynamic";
 

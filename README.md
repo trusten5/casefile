@@ -15,29 +15,6 @@ application.
 ![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?logo=clerk&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)
 
-## Content engine (marketing automation)
-
-`scripts/content-engine/` runs a daily pipeline for a faceless TikTok
-account promoting the app — AI-drafted slideshow copy grounded on real
-Supabase posting data, rendered into ready-to-upload images. Runs locally
-(not deployed), scheduled via two `launchd` jobs already installed on the
-dev machine:
-
-- **8:00am** — `generate.ts` drafts copy for 3 posts (tactical advice,
-  networking tactics, CTA), avoiding hooks used in recent batches, and
-  emails you the draft (via Mail.app — no third-party email service) with
-  each slide's exact photo filename.
-- **Your review window** — edit `content/output/<date>/draft.json`
-  directly, or use `/admin/content` in the live app (syncs through a
-  `content_drafts` Supabase table — editing there is optional; if you never
-  touch it, the local file is used as-is).
-- **8:30am** — `render.ts` renders the (possibly edited) draft into slide
-  images and emails you the previews. Posting to TikTok stays manual.
-
-Local-only asset library lives in `content/assets/` (photos, gitignored —
-not committed). See `scripts/content-engine/*.ts` for the individual
-steps; each can be run manually with `npx tsx scripts/content-engine/<script>.ts`.
-
 ## Screenshots
 
 |                                Live feed preview                                |                              Full feed                              |
