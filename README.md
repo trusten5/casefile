@@ -1,3 +1,5 @@
+<img src="docs/logo.svg" width="72" height="72" alt="Casefile logo">
+
 # Casefile
 
 **Every internship, new-grad, and full-time posting, in one feed — plus the
