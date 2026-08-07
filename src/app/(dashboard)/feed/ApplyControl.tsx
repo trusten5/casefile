@@ -120,7 +120,7 @@ export function ApplyControl({
           checked={applied}
           disabled={applied || pending}
           onChange={() => !applied && markApplied()}
-          className="h-4 w-4 rounded border-paper-line"
+          className="h-4 w-4 rounded border-paper-line accent-cobalt"
         />
         Applied
       </label>

@@ -11,6 +11,7 @@
   --ink-soft: #52616f;
   --ink-faint: #8797a3;
   --brass: #b8892f;
+  --cobalt: #3b6ec9;
 
   /* status palette — the same colors the product uses for funnel stages */
   --status-applied: #2c4a78;
@@ -34,6 +35,7 @@
   --ink-soft: #93a4b1;
   --ink-faint: #5c6b77;
   --brass: #d1a24a;
+  --cobalt: #6d97e0;
 
   --status-applied: #8fadd9;
   --status-oa: #d1a24a;
@@ -53,6 +55,7 @@
     --ink-soft: #93a4b1;
     --ink-faint: #5c6b77;
     --brass: #d1a24a;
+    --cobalt: #6d97e0;
 
     --status-applied: #8fadd9;
     --status-oa: #d1a24a;
@@ -72,6 +75,7 @@
   --color-ink-soft: var(--ink-soft);
   --color-ink-faint: var(--ink-faint);
   --color-brass: var(--brass);
+  --color-cobalt: var(--cobalt);
   --color-status-applied: var(--status-applied);
   --color-status-oa: var(--status-oa);
   --color-status-interview: var(--status-interview);

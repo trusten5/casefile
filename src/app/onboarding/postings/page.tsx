@@ -93,7 +93,7 @@ export default async function OnboardingPostingsPage(props: PageProps<"/onboardi
                 key={p.id}
                 className="flex items-center gap-3 rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink transition-colors duration-150 hover:border-ink-soft has-[:checked]:border-ink has-[:checked]:bg-ink/5"
               >
-                <input type="checkbox" name="postingId" value={p.id} className="accent-ink" />
+                <input type="checkbox" name="postingId" value={p.id} className="accent-cobalt" />
                 <CompanyLogo name={company?.name ?? "?"} logoUrl={company?.logo_url ?? null} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-medium">{p.title}</span>

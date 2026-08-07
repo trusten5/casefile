@@ -346,7 +346,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
                 type="checkbox"
                 name="digestEnabled"
                 defaultChecked={preferences.digestEnabled}
-                className="h-4 w-4"
+                className="h-4 w-4 accent-cobalt"
               />
               Enabled
             </label>

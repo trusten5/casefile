@@ -38,7 +38,7 @@ export default async function OnboardingInterestsPage(props: PageProps<"/onboard
               key={r.value}
               className="flex items-center gap-2 rounded border border-paper-line bg-paper px-3 py-2.5 text-sm text-ink transition-colors duration-150 hover:border-ink-soft has-[:checked]:border-ink has-[:checked]:bg-ink/5"
             >
-              <input type="radio" name="roleType" value={r.value} className="accent-ink" />
+              <input type="radio" name="roleType" value={r.value} className="accent-cobalt" />
               {r.label}
             </label>
           ))}

@@ -153,7 +153,7 @@ export function ApplicationRow({
                     type="checkbox"
                     checked={pending.checked.has(stage)}
                     onChange={(e) => toggleSkipped(stage, e.target.checked)}
-                    className="h-4 w-4 rounded border-paper-line"
+                    className="h-4 w-4 rounded border-paper-line accent-cobalt"
                   />
                   {STATUS_LABEL[stage]}
                 </label>
