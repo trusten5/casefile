@@ -4,10 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import { isAdmin } from "@/lib/admin";
-// Type-only import — no runtime code from scripts/content-engine ships in
-// the app bundle, just the shape of a batch draft.
-import type { Draft } from "../../../../../scripts/content-engine/generateCopy";
-import type { AssetType } from "../../../../../scripts/content-engine/pillars";
+import type { Draft, AssetType } from "@/lib/contentDrafts";
 
 async function requireAdmin() {
   if (!(await isAdmin())) throw new Error("Not authorized");
