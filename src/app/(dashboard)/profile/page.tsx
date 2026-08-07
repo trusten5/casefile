@@ -144,7 +144,7 @@ function FilterScopeSection({
             <option value="phd">PhD</option>
           </select>
         </label>
-        <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
+        <button type="submit" className="rounded bg-cobalt px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink">
           Save filter
         </button>
       </form>
@@ -248,7 +248,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
             label="Cover letter link"
             defaultValue={preferences.coverLetterUrl ?? ""}
           />
-          <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
+          <button type="submit" className="rounded bg-cobalt px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink">
             Save
           </button>
         </form>
@@ -291,7 +291,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
           />
           <button
             type="submit"
-            className="self-start rounded bg-ink px-4 py-2 text-sm font-medium text-paper"
+            className="self-start rounded bg-cobalt px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink"
           >
             Submit
           </button>

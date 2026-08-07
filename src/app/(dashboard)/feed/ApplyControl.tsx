@@ -148,7 +148,7 @@ export function ApplyControl({
             <button
               type="button"
               onClick={markApplied}
-              className="rounded bg-ink px-2 py-1 text-xs font-medium text-paper"
+              className="rounded bg-cobalt px-2 py-1 text-xs font-medium text-paper transition-colors hover:bg-ink"
             >
               Yes
             </button>

@@ -20,7 +20,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <button
           type="button"
           onClick={reset}
-          className="rounded bg-ink px-5 py-2.5 text-sm font-semibold text-paper"
+          className="rounded bg-cobalt px-5 py-2.5 text-sm font-semibold text-paper transition-colors hover:bg-ink"
         >
           Try again
         </button>
