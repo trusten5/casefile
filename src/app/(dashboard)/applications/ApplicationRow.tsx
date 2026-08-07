@@ -163,7 +163,7 @@ export function ApplicationRow({
               <button
                 type="button"
                 onClick={() => commitChange(pending.next, Array.from(pending.checked))}
-                className="rounded bg-ink px-2 py-1 text-xs font-medium text-paper"
+                className="rounded bg-cobalt px-2 py-1 text-xs font-medium text-paper transition-colors hover:bg-ink"
               >
                 Confirm
               </button>

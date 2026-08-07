@@ -144,7 +144,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
               Nothing tracked yet — grab a posting from the feed or add one manually.
             </p>
             <div className="mt-4 flex justify-center gap-3">
-              <Link href="/feed" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
+              <Link href="/feed" className="rounded bg-cobalt px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink">
                 Browse the feed
               </Link>
               <Link

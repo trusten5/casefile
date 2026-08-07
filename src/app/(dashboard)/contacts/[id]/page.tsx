@@ -121,7 +121,7 @@ export default async function ContactDetailPage(props: PageProps<"/contacts/[id]
             className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
-        <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
+        <button type="submit" className="rounded bg-cobalt px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink">
           Log it
         </button>
       </form>

@@ -332,7 +332,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
             className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
-        <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
+        <button type="submit" className="rounded bg-cobalt px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink">
           Add contact
         </button>
       </form>
@@ -361,7 +361,7 @@ export default async function ContactsPage(props: PageProps<"/contacts">) {
           </p>
           <Link
             href="/contacts/guide"
-            className="mt-4 inline-block rounded bg-ink px-4 py-2 text-sm font-medium text-paper"
+            className="mt-4 inline-block rounded bg-cobalt px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-ink"
           >
             Open the networking guide
           </Link>
