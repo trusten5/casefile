@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ece7d9",
+  themeColor: "#e9edf0",
 };
 
 export default function RootLayout({
@@ -51,14 +51,14 @@ export default function RootLayout({
     <ClerkProvider
       appearance={{
         variables: {
-          colorPrimary: "#1d2220",
-          colorBackground: "#ece7d9",
-          colorForeground: "#1d2220",
-          colorMutedForeground: "#55584f",
-          colorInput: "#ece7d9",
-          colorInputForeground: "#1d2220",
-          colorNeutral: "#55584f",
-          borderRadius: "0.375rem",
+          colorPrimary: "#101820",
+          colorBackground: "#e9edf0",
+          colorForeground: "#101820",
+          colorMutedForeground: "#52616f",
+          colorInput: "#e9edf0",
+          colorInputForeground: "#101820",
+          colorNeutral: "#52616f",
+          borderRadius: "4px",
           fontFamily: "var(--font-sans)",
         },
       }}

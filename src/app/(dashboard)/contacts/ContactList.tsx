@@ -45,14 +45,14 @@ export function ContactList({ contacts }: { contacts: Contact[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search contacts or companies…"
-          className="w-full max-w-sm rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          className="w-full max-w-sm rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         />
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
           Sort by
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortMode)}
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             <option value="name">Name</option>
             <option value="followUp">Soonest follow-up</option>
@@ -72,14 +72,14 @@ export function ContactList({ contacts }: { contacts: Contact[] }) {
             <Link
               key={c.id}
               href={`/contacts/${c.id}`}
-              className="flex items-center gap-3 rounded-lg border border-paper-line bg-tab/20 p-4 hover:border-ink-soft"
+              className="flex items-center gap-3 rounded border border-paper-line bg-tab/20 p-4 hover:border-ink-soft"
             >
               <Avatar name={c.name} />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="truncate font-medium text-ink">{c.name}</p>
                   {c.nextFollowUp && (
-                    <span className="shrink-0 rounded-full bg-status-oa/15 px-2 py-0.5 font-mono text-[11px] font-medium text-status-oa">
+                    <span className="shrink-0 rounded border border-status-oa px-2 py-0.5 font-mono text-[11px] font-medium text-status-oa">
                       Follow up {c.nextFollowUp}
                     </span>
                   )}

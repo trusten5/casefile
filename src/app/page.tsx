@@ -12,15 +12,15 @@ import { PostingRow } from "./(dashboard)/feed/PostingRow";
 import { FeedFilters } from "./(dashboard)/feed/FeedFilters";
 
 const CTA_CLASS =
-  "inline-flex items-center justify-center rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-status-applied focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
+  "inline-flex items-center justify-center rounded bg-ink px-6 py-3 text-sm font-semibold text-paper transition-colors hover:bg-status-applied focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 
 function TeaserCard({ tab, heading, body }: { tab: string; heading: string; body: string }) {
   return (
     <div className="relative pt-7">
-      <span className="absolute left-5 top-0 rounded-t-md bg-tab px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-soft">
+      <span className="absolute left-5 top-0 rounded-t bg-tab px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-soft">
         {tab}
       </span>
-      <div className="h-full rounded-b-xl rounded-tr-xl border border-paper-line bg-tab/40 p-6">
+      <div className="h-full rounded-b rounded-tr border border-paper-line bg-tab/40 p-6">
         <h3 className="font-display text-lg font-semibold text-ink">{heading}</h3>
         <p className="mt-2 text-sm leading-relaxed text-ink-soft">{body}</p>
       </div>
@@ -89,11 +89,11 @@ export default async function Home(props: PageProps<"/">) {
         )}
 
         <div className="relative mt-7 pt-7">
-          <span className="absolute left-0 top-0 rounded-t-md bg-tab px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-soft">
+          <span className="absolute left-0 top-0 rounded-t bg-tab px-3 py-1 font-mono text-[11px] font-medium uppercase tracking-wider text-ink-soft">
             Live feed
           </span>
           {postings?.length ? (
-            <ul className="divide-y divide-paper-line rounded-b-xl rounded-tr-xl border border-paper-line bg-tab/10 px-4">
+            <ul className="divide-y divide-paper-line rounded-b rounded-tr border border-paper-line bg-tab/10 px-4">
               {postings.map((posting) => (
                 <PostingRow
                   key={posting.id}
@@ -106,7 +106,7 @@ export default async function Home(props: PageProps<"/">) {
             </ul>
           ) : (
             !error && (
-              <p className="rounded-b-xl rounded-tr-xl border border-paper-line bg-tab/10 px-4 py-6 text-sm text-ink-soft">
+              <p className="rounded-b rounded-tr border border-paper-line bg-tab/10 px-4 py-6 text-sm text-ink-soft">
                 No postings match those filters yet — try clearing one.
               </p>
             )
@@ -116,7 +116,7 @@ export default async function Home(props: PageProps<"/">) {
         <div className="mt-6">
           <Link
             href={feedQuery ? `/feed?${feedQuery}` : "/feed"}
-            className="inline-flex items-center gap-1.5 rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
+            className="inline-flex items-center gap-1.5 rounded border border-paper-line px-4 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
           >
             See the full feed <span aria-hidden>→</span>
           </Link>

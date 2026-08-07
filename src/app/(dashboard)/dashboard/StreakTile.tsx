@@ -43,7 +43,7 @@ export function StreakTile({
 
   return (
     <div
-      className="relative rounded-lg border border-paper-line bg-tab/30 px-4 py-3"
+      className="relative rounded border border-paper-line bg-tab/30 px-4 py-3"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -56,7 +56,7 @@ export function StreakTile({
       </p>
 
       {hovered && (
-        <div className="absolute left-0 top-full z-20 mt-2 w-60 rounded-md border border-paper-line bg-paper p-3 shadow-md">
+        <div className="stamp-pop absolute left-0 top-full z-20 mt-2 w-60 p-3">
           <p className="mb-2 text-xs font-medium text-ink">{monthLabel}</p>
           <div className="grid grid-cols-7 gap-1">
             {WEEKDAY_LABELS.map((label, i) => (
@@ -69,7 +69,7 @@ export function StreakTile({
                 <div
                   key={cell.key}
                   title={`${cell.key}: ${cell.count} applied`}
-                  className={`aspect-square rounded-sm ${cellClass(cell.count)}`}
+                  className={`aspect-square rounded ${cellClass(cell.count)}`}
                 />
               ) : (
                 <div key={`empty-${i}`} />
@@ -78,10 +78,10 @@ export function StreakTile({
           </div>
           <div className="mt-2 flex flex-col gap-1 text-[10px] text-ink-soft">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-sm bg-status-offer" /> Met or beat goal
+              <span className="h-2 w-2 rounded bg-status-offer" /> Met or beat goal
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-sm bg-status-oa" /> Applied, under goal
+              <span className="h-2 w-2 rounded bg-status-oa" /> Applied, under goal
             </span>
             <span>
               * <Link href="/profile" className="underline hover:text-ink">set goal in profile</Link>

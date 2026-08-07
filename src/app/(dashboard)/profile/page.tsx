@@ -86,7 +86,7 @@ function FilterScopeSection({
             name="name"
             required
             placeholder="e.g. Remote internships"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -94,7 +94,7 @@ function FilterScopeSection({
           <input
             name="company"
             placeholder="Optional"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -102,7 +102,7 @@ function FilterScopeSection({
           <select
             name="roleType"
             defaultValue=""
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             <option value="">All roles</option>
             {Object.entries(ROLE_TYPE_LABELS).map(([value, label]) => (
@@ -119,7 +119,7 @@ function FilterScopeSection({
               <input
                 name="location"
                 placeholder="Optional"
-                className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+                className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
               />
             </label>
             <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -127,7 +127,7 @@ function FilterScopeSection({
               <input
                 name="keyword"
                 placeholder="Optional"
-                className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+                className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
               />
             </label>
           </>
@@ -137,14 +137,14 @@ function FilterScopeSection({
           <select
             name="level"
             defaultValue=""
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             <option value="">All</option>
             <option value="undergrad">Undergrad</option>
             <option value="phd">PhD</option>
           </select>
         </label>
-        <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+        <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
           Save filter
         </button>
       </form>
@@ -164,7 +164,7 @@ function FilterScopeSection({
                 <input type="hidden" name="level" value={s.level ?? ""} />
                 <button
                   type="submit"
-                  className="rounded-full border border-paper-line px-3 py-1.5 text-xs text-ink-soft hover:border-ink-soft hover:text-ink"
+                  className="rounded border border-paper-line px-3 py-1.5 text-xs text-ink-soft hover:border-ink-soft hover:text-ink"
                 >
                   + {s.name}
                 </button>
@@ -227,7 +227,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
               name="dailyGoal"
               min={1}
               defaultValue={preferences.dailyGoal}
-              className="w-24 rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+              className="w-24 rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
             />
           </label>
           <OptionalField name="school" label="School" defaultValue={preferences.school ?? ""} />
@@ -248,7 +248,7 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
             label="Cover letter link"
             defaultValue={preferences.coverLetterUrl ?? ""}
           />
-          <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+          <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
             Save
           </button>
         </form>
@@ -287,11 +287,11 @@ export default async function ProfilePage(props: PageProps<"/profile">) {
             maxLength={2000}
             rows={4}
             placeholder="What would help your internship search?"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
           <button
             type="submit"
-            className="self-start rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper"
+            className="self-start rounded bg-ink px-4 py-2 text-sm font-medium text-paper"
           >
             Submit
           </button>

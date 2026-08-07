@@ -147,14 +147,14 @@ export default async function ApplicationsPage(props: PageProps<"/applications">
 
       <div className="mt-6 flex flex-wrap gap-4">
         {STATUSES.map((s) => (
-          <div key={s.value} className="rounded-lg border border-paper-line bg-tab/30 px-4 py-2">
+          <div key={s.value} className="rounded border border-paper-line bg-tab/30 px-4 py-2">
             <p className={`font-mono text-xs uppercase tracking-wide ${s.color}`}>{s.label}</p>
             <p className="font-display text-xl font-semibold text-ink">{counts[s.value]}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 rounded-lg border border-paper-line bg-tab/10 p-4">
+      <div className="mt-6 rounded border border-paper-line bg-tab/10 p-4">
         <ApplicationSankey flow={flow} />
       </div>
 
@@ -164,7 +164,7 @@ export default async function ApplicationsPage(props: PageProps<"/applications">
           <input
             name="companyName"
             required
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -172,7 +172,7 @@ export default async function ApplicationsPage(props: PageProps<"/applications">
           <input
             name="roleTitle"
             required
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
         </label>
         <label className="flex flex-col gap-1 text-xs text-ink-soft">
@@ -180,7 +180,7 @@ export default async function ApplicationsPage(props: PageProps<"/applications">
           <select
             name="status"
             defaultValue="applied"
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             {STATUSES.map((s) => (
               <option key={s.value} value={s.value}>
@@ -189,7 +189,7 @@ export default async function ApplicationsPage(props: PageProps<"/applications">
             ))}
           </select>
         </label>
-        <button type="submit" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+        <button type="submit" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
           Add application
         </button>
       </form>

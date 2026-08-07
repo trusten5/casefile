@@ -121,11 +121,11 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
           dailyGoal={preferences.dailyGoal}
           countsByDay={countsByDay}
         />
-        <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+        <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Total applications</p>
           <p className="font-display text-xl font-semibold text-ink">{totalApplications}</p>
         </div>
-        <div className="rounded-lg border border-paper-line bg-tab/30 px-4 py-3">
+        <div className="rounded border border-paper-line bg-tab/30 px-4 py-3">
           <p className="font-mono text-xs uppercase tracking-wide text-ink-soft">Saved postings</p>
           <p className="font-display text-xl font-semibold text-ink">{savedCountResult.count ?? 0}</p>
         </div>
@@ -139,17 +139,17 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
           </Link>
         </div>
         {totalApplications === 0 ? (
-          <div className="mt-4 rounded-xl border border-dashed border-paper-line p-6 text-center">
+          <div className="mt-4 rounded border border-dashed border-paper-line p-6 text-center">
             <p className="text-sm text-ink-soft">
               Nothing tracked yet — grab a posting from the feed or add one manually.
             </p>
             <div className="mt-4 flex justify-center gap-3">
-              <Link href="/feed" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper">
+              <Link href="/feed" className="rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
                 Browse the feed
               </Link>
               <Link
                 href="/applications"
-                className="rounded-md border border-paper-line px-4 py-2 text-sm text-ink"
+                className="rounded border border-paper-line px-4 py-2 text-sm text-ink"
               >
                 Add an application
               </Link>
@@ -158,7 +158,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
         ) : (
           <div className="mt-4 flex flex-wrap gap-4">
             {STATUSES.map((s) => (
-              <div key={s.value} className="rounded-lg border border-paper-line bg-tab/30 px-4 py-2">
+              <div key={s.value} className="rounded border border-paper-line bg-tab/30 px-4 py-2">
                 <p className={`font-mono text-xs uppercase tracking-wide ${s.color}`}>{s.label}</p>
                 <p className="font-display text-xl font-semibold text-ink">{counts[s.value]}</p>
               </div>

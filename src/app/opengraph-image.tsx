@@ -14,11 +14,11 @@ export default function OgImage() {
           flexDirection: "column",
           justifyContent: "center",
           padding: 80,
-          background: "#ece7d9",
+          background: "#e9edf0",
           fontFamily: "serif",
         }}
       >
-        <div style={{ fontSize: 28, color: "#55584f", letterSpacing: 2 }}>
+        <div style={{ fontSize: 28, color: "#52616f", letterSpacing: 2 }}>
           CASEFILE
         </div>
         <div
@@ -26,13 +26,13 @@ export default function OgImage() {
             marginTop: 24,
             fontSize: 76,
             fontWeight: 700,
-            color: "#1d2220",
+            color: "#101820",
             lineHeight: 1.1,
           }}
         >
           Applied. Tracked. Repeat.
         </div>
-        <div style={{ marginTop: 28, fontSize: 30, color: "#55584f", maxWidth: 900 }}>
+        <div style={{ marginTop: 28, fontSize: 30, color: "#52616f", maxWidth: 900 }}>
           One case file for every application, every contact, every lead.
         </div>
       </div>

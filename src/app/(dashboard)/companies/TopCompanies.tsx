@@ -70,7 +70,7 @@ export function TopCompanies({
               <Link
                 key={c.id}
                 href={`/companies/${c.slug}`}
-                className="flex items-center gap-2 rounded-full border border-paper-line bg-tab/20 py-1.5 pl-2 pr-4 hover:border-ink-soft"
+                className="flex items-center gap-2 rounded border border-paper-line bg-tab/20 py-1.5 pl-2 pr-4 hover:border-ink-soft"
               >
                 <CompanyLogo name={c.name} logoUrl={c.logoUrl} />
                 <span className="text-sm font-medium text-ink">{c.name}</span>
@@ -87,7 +87,7 @@ export function TopCompanies({
           </p>
           <ChartFilters initialWindow={chartWindow} initialType={chartType} />
         </div>
-        <div className="mt-3 rounded-lg border border-paper-line bg-tab/10 p-4">
+        <div className="mt-3 rounded border border-paper-line bg-tab/10 p-4">
           <JobPostingsChart companies={companies} windowLabel={windowLabel} />
         </div>
       </div>

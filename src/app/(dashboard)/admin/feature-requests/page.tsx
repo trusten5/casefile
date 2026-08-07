@@ -34,7 +34,7 @@ export default async function AdminFeatureRequestsPage(props: PageProps<"/admin/
       <Flash message={flash} />
       <Link
         href="/admin/reports"
-        className="inline-block rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink"
+        className="inline-block rounded border border-paper-line px-3 py-1.5 text-sm text-ink"
       >
         ← Reports
       </Link>
@@ -63,7 +63,7 @@ export default async function AdminFeatureRequestsPage(props: PageProps<"/admin/
             <form action={markFeatureRequestRead.bind(null, r.id)} className="shrink-0">
               <button
                 type="submit"
-                className="rounded-md border border-paper-line px-3 py-1.5 text-sm text-ink"
+                className="rounded border border-paper-line px-3 py-1.5 text-sm text-ink"
               >
                 Mark read
               </button>

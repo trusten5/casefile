@@ -49,7 +49,7 @@ export function SavedFilterRow({
         <p className="truncate font-medium text-ink">
           {name}
           {isDefault && (
-            <span className="ml-2 rounded-full bg-status-offer/15 px-2 py-0.5 font-mono text-[11px] font-medium text-status-offer">
+            <span className="ml-2 rounded border border-status-offer px-2 py-0.5 font-mono text-[11px] font-medium text-status-offer">
               Default
             </span>
           )}
@@ -58,7 +58,7 @@ export function SavedFilterRow({
       </div>
       <div className="flex shrink-0 items-center gap-2">
         <form action={setDefaultFilter.bind(null, filterId, scope, !isDefault)}>
-          <button type="submit" className="rounded-md border border-paper-line px-3 py-1.5 text-xs text-ink">
+          <button type="submit" className="rounded border border-paper-line px-3 py-1.5 text-xs text-ink">
             {isDefault ? "Unset default" : "Set as default"}
           </button>
         </form>

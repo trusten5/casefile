@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { postingFiltersToQueryString, type PostingFilters as Filters } from "@/lib/postingFilters";
+import { CloseIcon, StarIcon } from "@/components/icons";
 
 const ROLE_TYPES = [
   { value: "", label: "All roles" },
@@ -126,7 +127,7 @@ export function FeedFilters({
           <select
             value=""
             onChange={(e) => applyPreset(e.target.value)}
-            className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           >
             <option value="">Load a saved filter…</option>
             {presets.map((p) => (
@@ -147,7 +148,7 @@ export function FeedFilters({
             onBlur={() => setTimeout(() => setCompanyDropdownOpen(false), 150)}
             placeholder={savedCompaniesOnly ? "All saved companies" : "Search companies…"}
             autoComplete="off"
-            className="w-full rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+            className="w-full rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
           />
           {savedCompaniesOnly && (
             <button
@@ -156,20 +157,20 @@ export function FeedFilters({
               className="shrink-0 text-ink-soft hover:text-ink"
               title="Clear"
             >
-              ✕
+              <CloseIcon className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
         {companyDropdownOpen && savedCompanies.length > 0 && (
-          <ul className="absolute left-0 top-full z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-paper-line bg-paper py-1 shadow-sm">
+          <ul className="stamp-pop absolute left-0 top-full z-10 mt-1 max-h-48 w-full overflow-y-auto py-1">
             <li>
               <button
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={selectAllSavedCompanies}
-                className="block w-full px-3 py-1.5 text-left text-sm text-ink hover:bg-tab/20"
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-ink hover:bg-tab/40"
               >
-                ★ All saved companies
+                <StarIcon className="h-3 w-3 shrink-0 text-brass" /> All saved companies
               </button>
             </li>
             {matchingSavedCompanies.map((name) => (
@@ -178,9 +179,9 @@ export function FeedFilters({
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => selectSavedCompany(name)}
-                  className="block w-full px-3 py-1.5 text-left text-sm text-ink hover:bg-tab/20"
+                  className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-ink hover:bg-tab/40"
                 >
-                  ★ {name}
+                  <StarIcon className="h-3 w-3 shrink-0 text-brass" /> {name}
                 </button>
               </li>
             ))}
@@ -192,7 +193,7 @@ export function FeedFilters({
         <select
           value={filters.roleType}
           onChange={(e) => applyImmediately({ roleType: e.target.value })}
-          className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         >
           {ROLE_TYPES.map((r) => (
             <option key={r.value} value={r.value}>
@@ -207,7 +208,7 @@ export function FeedFilters({
           value={filters.location}
           onChange={(e) => applyDebounced({ location: e.target.value })}
           placeholder="e.g. Remote, New York"
-          className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         />
       </label>
       <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
@@ -216,7 +217,7 @@ export function FeedFilters({
           value={filters.keyword}
           onChange={(e) => applyDebounced({ keyword: e.target.value })}
           placeholder="e.g. Engineer, Design, Contract"
-          className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         />
       </label>
       <label className="flex min-w-[140px] flex-1 flex-col gap-1 text-xs text-ink-soft">
@@ -224,7 +225,7 @@ export function FeedFilters({
         <select
           value={filters.level}
           onChange={(e) => applyImmediately({ level: e.target.value })}
-          className="rounded-md border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
+          className="rounded border border-paper-line bg-paper px-3 py-2 text-sm text-ink"
         >
           {LEVELS.map((l) => (
             <option key={l.value} value={l.value}>

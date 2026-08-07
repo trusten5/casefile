@@ -1,28 +1,77 @@
 @import "tailwindcss";
 
 :root {
-  /* paper + ink — a ledger, not a SaaS gradient */
-  --paper: #ece7d9;
-  --paper-line: #d9d2bd;
-  --tab: #ddd3b6;
-  --ink: #1d2220;
-  --ink-soft: #55584f;
+  /* "Steel file" — a filing cabinet, not a manila folder. Cool blue-grey
+     ground instead of warm cream; brass is the one warm accent. */
+  --paper: #e9edf0;
+  --paper-raised: #f2f5f7;
+  --paper-line: #c9d2d8;
+  --tab: #d7dee3;
+  --ink: #101820;
+  --ink-soft: #52616f;
+  --ink-faint: #8797a3;
+  --brass: #b8892f;
 
   /* status palette — the same colors the product uses for funnel stages */
-  --status-applied: #2b3a55;
-  --status-oa: #c98a2c;
-  --status-interview: #2f6f76;
-  --status-offer: #3c6e47;
-  --status-rejected: #ad473c;
-  --status-ghosted: #8b8880;
+  --status-applied: #2c4a78;
+  --status-oa: #b8892f;
+  --status-interview: #29808a;
+  --status-offer: #2f7a56;
+  --status-rejected: #a8452f;
+  --status-ghosted: #7d8791;
+
+  /* one radius everywhere; elevation is a hard offset, not a blur */
+  --radius: 4px;
+  --stamp-shadow: 4px 4px 0 var(--ink);
+}
+
+:root[data-theme="dark"] {
+  --paper: #12171c;
+  --paper-raised: #182028;
+  --paper-line: #303c46;
+  --tab: #1c2630;
+  --ink: #e6ecf0;
+  --ink-soft: #93a4b1;
+  --ink-faint: #5c6b77;
+  --brass: #d1a24a;
+
+  --status-applied: #8fadd9;
+  --status-oa: #d1a24a;
+  --status-interview: #6cc0c7;
+  --status-offer: #7fc79b;
+  --status-rejected: #d98a70;
+  --status-ghosted: #9aa7b0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12171c;
+    --paper-raised: #182028;
+    --paper-line: #303c46;
+    --tab: #1c2630;
+    --ink: #e6ecf0;
+    --ink-soft: #93a4b1;
+    --ink-faint: #5c6b77;
+    --brass: #d1a24a;
+
+    --status-applied: #8fadd9;
+    --status-oa: #d1a24a;
+    --status-interview: #6cc0c7;
+    --status-offer: #7fc79b;
+    --status-rejected: #d98a70;
+    --status-ghosted: #9aa7b0;
+  }
 }
 
 @theme inline {
   --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
   --color-paper-line: var(--paper-line);
   --color-tab: var(--tab);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-brass: var(--brass);
   --color-status-applied: var(--status-applied);
   --color-status-oa: var(--status-oa);
   --color-status-interview: var(--status-interview);
@@ -32,5 +81,16 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
+  --radius-DEFAULT: var(--radius);
+}
+
+/* Elevation for anything that floats above the page — popovers, dropdowns,
+   toasts. A hard offset instead of a blurred drop shadow: a card slid off
+   the stack, not lit from above. Pairs with a slightly heavier ink border. */
+.stamp-pop {
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--paper-raised);
+  box-shadow: var(--stamp-shadow);
 }
 

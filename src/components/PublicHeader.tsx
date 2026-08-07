@@ -16,7 +16,7 @@ export function PublicHeader() {
         </Link>
         <Link
           href="/sign-up"
-          className="rounded-full border border-paper-line px-4 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
+          className="rounded border border-paper-line px-4 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
         >
           Sign up free
         </Link>

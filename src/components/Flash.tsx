@@ -4,7 +4,7 @@
 export function Flash({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <div className="mb-6 rounded-md border border-status-offer bg-status-offer/10 px-4 py-2 text-sm font-medium text-status-offer">
+    <div className="mb-6 rounded border border-status-offer bg-status-offer/10 px-4 py-2 text-sm font-medium text-status-offer">
       {message}
     </div>
   );

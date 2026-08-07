@@ -2,26 +2,7 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { isAdmin } from "@/lib/admin";
 import { PublicHeader } from "@/components/PublicHeader";
-
-function MenuIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="18" x2="21" y2="18" />
-    </svg>
-  );
-}
+import { MenuIcon } from "@/components/icons";
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -95,7 +76,7 @@ export default async function DashboardLayout({
             aria-label="Menu"
             className="flex list-none items-center rounded p-1 text-ink [&::-webkit-details-marker]:hidden"
           >
-            <MenuIcon />
+            <MenuIcon className="h-5 w-5" />
           </summary>
           <nav className="absolute inset-x-0 top-full z-10 flex flex-col gap-1 border-b border-paper-line bg-paper px-6 py-4">
             {navLinks.map((link) => (
