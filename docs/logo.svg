@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108" viewBox="0 0 108 108" fill="none">
+  <!-- brass stamp shadow, offset behind the card: same hard-offset,
+       no-blur motif as the app's stamp-shadow token, but brass instead of
+       ink since a same-color ink-on-ink shadow would vanish against the
+       card itself -->
+  <rect x="10" y="10" width="88" height="88" rx="14" fill="#b8892f"/>
+  <!-- the actual favicon/apple-icon, unchanged: ink card, paper "C" -->
+  <rect x="4" y="4" width="88" height="88" rx="14" fill="#101820" stroke="#c9d2d8" stroke-width="1"/>
+  <text x="48" y="49" text-anchor="middle" dominant-baseline="central"
+        font-family="Georgia, 'Times New Roman', serif" font-weight="700"
+        font-size="52" fill="#e9edf0">C</text>
+</svg>
